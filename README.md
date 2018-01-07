@@ -141,6 +141,9 @@ It works on a unified interval that is defaulted to 60 seconds. Watchdog timers 
 - Stage 3: when 3 timers expire relating to one pool, the pool is kicked
 
 Watchdog timers reset after three times the number of seconds it takes to get to stage 3.
+
+**-MPHApiKey**
+Set your API key from MiningPoolHub. Will automatically update statistics for workers on https://miningpoolhubstats.com
 	
 
 	
@@ -158,7 +161,7 @@ Watchdog timers reset after three times the number of seconds it takes to get to
     setx GPU_MAX_ALLOC_PERCENT 100
     setx GPU_SINGLE_ALLOC_PERCENT 100
     
-    set "command=& .\multipoolminer.ps1 -wallet 1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb -username aaronsace -workername multipoolminer -region europe -currency btc,usd,eur -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins,zpool,nicehash -algorithm cryptonight,decred,decrednicehash,ethash,ethash2gb,equihash,groestl,lbry,lyra2re2,lyra2z,neoscrypt,pascal,sia,siaclaymore,sianicehash,sib,skunk -donate 24 -watchdog -switchingprevention 2"
+    set "command=& .\multipoolminer.ps1 -wallet 1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb -username aaronsace -workername multipoolminer -region europe -currency btc,usd,eur -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins,zpool,nicehash -algorithm cryptonight,decred,decrednicehash,ethash,ethash2gb,equihash,groestl,lbry,lyra2re2,lyra2z,neoscrypt,pascal,sia,siaclaymore,sianicehash,sib,skunk -donate 24 -watchdog -switchingprevention 2 -MPHApiKey asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd1234"
 
     pwsh -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
     powershell -version 5.0 -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
