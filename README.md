@@ -1,5 +1,5 @@
-# MultiPoolMiner
-###### created by aaronsace 
+# MultiPoolMiner (With MiningPoolHubStats Support)
+###### created by jimok82 (based on MultiPoolMiner created by aaronsace) 
 
 ## Important note for those already using MPM who want the reporting feature for https://miningpooolhubstats.com
 
