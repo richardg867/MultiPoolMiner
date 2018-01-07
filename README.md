@@ -141,6 +141,9 @@ It works on a unified interval that is defaulted to 60 seconds. Watchdog timers 
 - Stage 3: when 3 timers expire relating to one pool, the pool is kicked
 
 Watchdog timers reset after three times the number of seconds it takes to get to stage 3.
+
+**-MPHApiKey**
+Set your API key from MiningPoolHub. Will automatically update statistics for workers on https://miningpoolhubstats.com
 	
 
 	
