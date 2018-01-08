@@ -141,6 +141,9 @@ COMMAND LINE OPTIONS (case-insensitive - except for BTC addresses, see Sample Us
 	- Stage 3: when 3 timers expire relating to one pool, the pool is kicked
 	Watchdog timers reset after three times the number of seconds it takes to get to stage 3.
 	
+-MPHApiKey
+	Set your API key from MiningPoolHub. Will automatically update statistics for workers on https://miningpoolhubstats.com
+	
 	
 ====================================================================
 	
