@@ -482,8 +482,14 @@ while ($true) {
         }
     }
 
-    #Display mining information
     Clear-Host
+
+    #POST data to stats
+    if($MPHApiKey) {
+        .\ReportStatus.ps1 -WorkerName $WorkerNameBackup -ActiveMiners $ActiveMiners -Miners $Miners -MPHApiKey $MPHApiKey
+    }
+
+    #Display mining information
     $Miners | Where-Object {$_.Profit -ge 1E-5 -or $_.Profit -eq $null} | Sort-Object -Descending Type, Profit_Bias | Format-Table -GroupBy Type (
         @{Label = "Miner"; Expression = {$_.Name}}, 
         @{Label = "Algorithm"; Expression = {$_.HashRates.PSObject.Properties.Name}}, 
