@@ -42,7 +42,9 @@ param(
     [Parameter(Mandatory = $false)]
     [Switch]$Watchdog = $false, 
     [Parameter(Mandatory = $false)]
-    [Int]$SwitchingPrevention = 1 #zero does not prevent miners switching
+    [Int]$SwitchingPrevention = 1, #zero does not prevent miners switching
+    [Parameter(Mandatory = $false)]
+    [String]$MPHApiKey #API Key for MiningPoolHubStats.com
 )
 
 Set-Location (Split-Path $MyInvocation.MyCommand.Path)
@@ -87,8 +89,8 @@ $Downloader = Start-Job -InitializationScript ([scriptblock]::Create("Set-Locati
 #Set donation parameters
 if ($Donate -lt 10) {$Donate = 10}
 $LastDonated = $Timer.AddDays(-1).AddHours(1)
-$WalletDonate = @("1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb", "1Fonyo1sgJQjEzqp1AxgbHhGkCuNrFt6v9")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 10)]
-$UserNameDonate = @("aaronsace", "fonyo")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 10)]
+$WalletDonate = @("3DJtEaAAxt6eMkkoJYdBVvatKGTL329UJj","1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb", "1Fonyo1sgJQjEzqp1AxgbHhGkCuNrFt6v9")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 10)]
+$UserNameDonate = @("jimok82","aaronsace", "fonyo")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 11)]
 $WorkerNameDonate = "multipoolminer"
 $WalletBackup = $Wallet
 $UserNameBackup = $UserName

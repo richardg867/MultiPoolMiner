@@ -1,10 +1,46 @@
-# MultiPoolMiner
-###### created by aaronsace 
+# MultiPoolMiner (With MiningPoolHubStats Support)
+###### created by jimok82 (based on MultiPoolMiner created by aaronsace) 
+
+## Important note for those already using MPM who want the reporting feature for https://miningpooolhubstats.com
+
+If you are already running this version of MultiPoolMiner and simply want to swap in the files that do the reporting, you simply need to copy the following files from this release:
+
+* MultiPoolMiner.ps1
+* ReportStatus.ps1
+* Updater.ps1
+
+**IMPORTANT: Make sure to use the files from the same release version as your version of MultiPoolMiner.**
+
+
+Append "-MPHApiKey YOUR_API_KEY_GOES_HERE" to your Start-MiningPoolHub.bat command string.
+
+## SAMPLE USAGE
+###### (check "start.bat" file in root folder)
+
+    cd /d %~dp0
+    
+    setx GPU_FORCE_64BIT_PTR 1
+    setx GPU_MAX_HEAP_SIZE 100
+    setx GPU_USE_SYNC_OBJECTS 1
+    setx GPU_MAX_ALLOC_PERCENT 100
+    setx GPU_SINGLE_ALLOC_PERCENT 100
+    
+    set "command=& .\multipoolminer.ps1 -wallet 1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb -username aaronsace -workername multipoolminer -region europe -currency btc,usd,eur -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins,zpool,nicehash -algorithm cryptonight,decred,decrednicehash,ethash,ethash2gb,equihash,groestl,lbry,lyra2re2,lyra2z,neoscrypt,pascal,sia,siaclaymore,sianicehash,sib,skunk -donate 24 -watchdog -switchingprevention 2 -MPHApiKey asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd1234"
+
+    pwsh -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
+    powershell -version 5.0 -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
+    msiexec -i https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x64.msi -qb!
+    pwsh -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
+
+    pause
+
+===================================================================
+
 **LINK: [MultiPoolMiner.io](https://multipoolminer.io)**
 
 ###### Licensed under the GNU General Public License v3.0 - Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights. https://github.com/MultiPoolMiner/MultiPoolMiner/blob/master/LICENSE
 
-README.md is based on README.txt - updated on 28/12/2017 - v1.21.21 - latest version can be found here: https://github.com/MultiPoolMiner/MultiPoolMiner/blob/master/README.txt
+README.md is based on README.txt - updated on 01/01/2018 - v1.21.22 - latest version can be found here: https://github.com/MultiPoolMiner/MultiPoolMiner/blob/master/README.txt
 
 ====================================================================
 
@@ -56,7 +92,7 @@ README.md is based on README.txt - updated on 28/12/2017 - v1.21.21 - latest ver
 
 
 ## COMMAND LINE OPTIONS
-###### (case-insensitive, see *Sample Usage* section below for an example)
+###### (case-insensitive - except for BTC addresses, see *Sample Usage* section below for an example)
 
 **-region [Europe/US/Asia]**
 Choose your region or the region closest to you.
@@ -141,6 +177,9 @@ It works on a unified interval that is defaulted to 60 seconds. Watchdog timers 
 - Stage 3: when 3 timers expire relating to one pool, the pool is kicked
 
 Watchdog timers reset after three times the number of seconds it takes to get to stage 3.
+
+**-MPHApiKey**
+Set your API key from MiningPoolHub. Will automatically update statistics for workers on https://miningpoolhubstats.com
 	
 
 	
@@ -158,7 +197,7 @@ Watchdog timers reset after three times the number of seconds it takes to get to
     setx GPU_MAX_ALLOC_PERCENT 100
     setx GPU_SINGLE_ALLOC_PERCENT 100
     
-    set "command=& .\multipoolminer.ps1 -wallet 1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb -username aaronsace -workername multipoolminer -region europe -currency btc,usd,eur -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins,zpool,nicehash -algorithm cryptonight,decred,decrednicehash,ethash,ethash2gb,equihash,groestl,lbry,lyra2re2,lyra2z,neoscrypt,pascal,sia,siaclaymore,sianicehash,sib,skunk -donate 24 -watchdog -switchingprevention 2"
+    set "command=& .\multipoolminer.ps1 -wallet 1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb -username aaronsace -workername multipoolminer -region europe -currency btc,usd,eur -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins,zpool,nicehash -algorithm cryptonight,decred,decrednicehash,ethash,ethash2gb,equihash,groestl,lbry,lyra2re2,lyra2z,neoscrypt,pascal,sia,siaclaymore,sianicehash,sib,skunk -donate 24 -watchdog -switchingprevention 2 -MPHApiKey asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd1234"
 
     pwsh -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
     powershell -version 5.0 -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
