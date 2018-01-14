@@ -58,7 +58,7 @@ $Blockmunch_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | 
                 Host          = $Blockmunch_Host
                 Port          = $Blockmunch_Port
                 User          = $Wallet
-                Pass          = "$WorkerName,c=BTC"
+                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
                 Region        = $Blockmunch_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated

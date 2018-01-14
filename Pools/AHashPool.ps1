@@ -53,7 +53,7 @@ $AHashPool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | S
                 Host          = "$AHashPool_Algorithm.$AHashPool_Host"
                 Port          = $AHashPool_Port
                 User          = $Wallet
-                Pass          = "$WorkerName,c=BTC"
+                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
                 Region        = $AHashPool_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated

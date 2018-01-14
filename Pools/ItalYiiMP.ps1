@@ -58,7 +58,7 @@ $ItalYiiMP_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | S
                 Host          = "$ItalYiiMP_Algorithm.$ItalYiiMP_Host"
                 Port          = $ItalYiiMP_Port
                 User          = $Wallet
-                Pass          = "$WorkerName,c=BTC"
+                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
                 Region        = $ItalYiiMP_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated

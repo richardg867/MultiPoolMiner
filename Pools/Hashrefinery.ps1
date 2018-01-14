@@ -53,7 +53,7 @@ $HashRefinery_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore 
                 Host          = "$HashRefinery_Algorithm.$HashRefinery_Region.$HashRefinery_Host"
                 Port          = $HashRefinery_Port
                 User          = $Wallet
-                Pass          = "$WorkerName,c=BTC"
+                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
                 Region        = $HashRefinery_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated
