@@ -1,5 +1,8 @@
-# MultiPoolMiner (With MiningPoolHubStats Support)
-###### created by jimok82 (based on MultiPoolMiner created by aaronsace) 
+# Personal MultiPoolMiner Fork
+
+This is my personal MultiPoolMiner code playground, based on the MiningPoolHubStats fork. Consider using the original version. The original readme is located below for reference.
+
+===================================================================
 
 ## Important note for those already using MPM who want the reporting feature for https://miningpooolhubstats.com
 
