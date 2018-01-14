@@ -4,6 +4,8 @@ param(
     [Parameter(Mandatory = $false)]
     [String]$Wallet, 
     [Parameter(Mandatory = $false)]
+    [String]$WalletLtc, 
+    [Parameter(Mandatory = $false)]
     [String]$UserName, 
     [Parameter(Mandatory = $false)]
     [String]$WorkerName = "multipoolminer", 
@@ -142,7 +144,7 @@ while ($true) {
     Write-Log "Loading pool information..."
     $NewPools = @()
     if (Test-Path "Pools") {
-        $NewPools = Get-ChildItemContent "Pools" -Parameters @{Wallet = $Wallet; UserName = $UserName; WorkerName = $WorkerName; StatSpan = $StatSpan} | ForEach-Object {$_.Content | Add-Member Name $_.Name -PassThru}
+        $NewPools = Get-ChildItemContent "Pools" -Parameters @{Wallet = $Wallet; WalletLtc = $WalletLtc; UserName = $UserName; WorkerName = $WorkerName; StatSpan = $StatSpan} | ForEach-Object {$_.Content | Add-Member Name $_.Name -PassThru}
     }
 
     # This finds any pools that were already in $AllPools (from a previous loop) but not in $NewPools. Add them back to the list. Their API likely didn't return in time, but we don't want to cut them off just yet

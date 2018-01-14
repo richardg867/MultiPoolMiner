@@ -57,8 +57,8 @@ $Blockmunch_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | 
                 Protocol      = "stratum+tcp"
                 Host          = $Blockmunch_Host
                 Port          = $Blockmunch_Port
-                User          = $Wallet
-                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
+                User          = if ($WalletLtc) {$WalletLtc} else {$Wallet}
+                Pass          = "$WorkerName,c=$(if ($WalletLtc) {"LTC"} else {"BTC"})"
                 Region        = $Blockmunch_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated
