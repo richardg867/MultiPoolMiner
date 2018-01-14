@@ -42,9 +42,9 @@ param(
     [Parameter(Mandatory = $false)]
     [Switch]$Watchdog = $false,
     [Parameter(Mandatory = $false)]
-    [String]$MPHApiKey,
+    [Int]$SwitchingPrevention = 1,
     [Parameter(Mandatory = $false)]
-    [Int]$SwitchingPrevention = 1 #zero does not prevent miners switching
+    [String]$MPHApiKey #API Key for MiningPoolHubStats.com
 )
 
 Set-Location (Split-Path $MyInvocation.MyCommand.Path)
@@ -87,7 +87,7 @@ Start-Transcript ".\Logs\$(Get-Date -Format "yyyy-MM-dd_HH-mm-ss").txt"
 $Downloader = Start-Job -InitializationScript ([scriptblock]::Create("Set-Location('$(Get-Location)')")) -ArgumentList ("2.7.1.4", $PSVersionTable.PSVersion, "") -FilePath .\Updater.ps1
 
 #Set donation parameters
-if ($Donate -lt 10) {$Donate = 10}
+if ($Donate -lt 10) {$Donate = 0}
 $LastDonated = $Timer.AddDays(-1).AddHours(1)
 $WalletDonate = @("3DJtEaAAxt6eMkkoJYdBVvatKGTL329UJj","1Q24z7gHPDbedkaWDTFqhMF8g7iHMehsCb", "1Fonyo1sgJQjEzqp1AxgbHhGkCuNrFt6v9")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 10)]
 $UserNameDonate = @("jimok82","aaronsace", "fonyo")[[Math]::Floor((Get-Random -Minimum 1 -Maximum 11) / 10)]

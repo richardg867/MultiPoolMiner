@@ -21,7 +21,7 @@ $MatchingMiner = $Miners | Where-Object {$_.Name -eq $ActiveMiner.Name -and $_.P
         Type = @($_.Type)
         Active = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f ((Get-Date) - $_.Process.StartTime)
         Algorithm = @($_.Algorithm)
-        Pool = @($MatchingMiner.Pools.PsObject.Properties.Value.Name)
+        Pool = @(if($MatchingMiner.Pools.PsObject.Properties.Value.Name) {$MatchingMiner.Pools.PsObject.Properties.Value.Name+"-"+$MatchingMiner.Pools.PsObject.Properties.Value.Info} else {$MatchingMiner.Pools.PsObject.Properties.Value.Name})
         CurrentSpeed = @($_.Speed_Live | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})
         EstimatedSpeed = @($_.Speed | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})
         PID = $_.Process.Id
@@ -29,8 +29,22 @@ $MatchingMiner = $Miners | Where-Object {$_.Name -eq $ActiveMiner.Name -and $_.P
     }
 })
 
-try{
-    Invoke-RestMethod -Uri "https://miningpoolhubstats.com/api/worker/$MPHApiKey" -TimeoutSec 10 -Method Post -Body @{workername = $WorkerName; miners = $minerreport; profit = $profit}
-} catch {
-    Write-Warning "Unable to post to monitoring URL..."
+$retries = 3
+$retrycount = 0
+$completed = $false
+
+while (-not $completed) {
+    try{
+        Invoke-RestMethod -Uri "https://miningpoolhubstats.com/api/worker/$MPHApiKey" -TimeoutSec 10 -Method Post -Body @{workername = $WorkerName; miners = $minerreport; profit = $profit}
+        $completed = $true
+    } catch {
+        if ($retrycount -ge $retries) {
+            Write-Warning "Unable to post to monitoring URL..."
+        } else {
+            Write-Warning "Post to monitoring URL failed. Retrying in 5 seconds."
+            Start-Sleep 5
+            $retrycount++
+        }
+    }
 }
+
