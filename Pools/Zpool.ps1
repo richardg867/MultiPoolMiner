@@ -58,7 +58,7 @@ $Zpool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Selec
                 Host          = "$Zpool_Algorithm.$Zpool_Host"
                 Port          = $Zpool_Port
                 User          = $Wallet
-                Pass          = "$WorkerName,c=BTC"
+                Pass          = "$WorkerName,c=$(If ($Wallet.Substring(0,1) -eq "L") {"LTC"} else {"BTC"})"
                 Region        = $Zpool_Region_Norm
                 SSL           = $false
                 Updated       = $Stat.Updated
