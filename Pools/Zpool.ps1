@@ -47,7 +47,7 @@ $Zpool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Selec
         $Zpool_Region = $_
         $Zpool_Region_Norm = Get-Region $Zpool_Region
 
-        if ($Wallet) {
+        if ($Wallet -or $WalletLtc) {
             [PSCustomObject]@{
                 Algorithm     = $Zpool_Algorithm_Norm
                 Info          = $Zpool_Coin

@@ -47,7 +47,7 @@ $Blockmunch_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | 
         $Blockmunch_Region = $_
         $Blockmunch_Region_Norm = Get-Region $Blockmunch_Region
 
-        if ($Wallet) {
+        if ($Wallet -or $WalletLtc) {
             [PSCustomObject]@{
                 Algorithm     = $Blockmunch_Algorithm_Norm
                 Info          = $Blockmunch_Coin
