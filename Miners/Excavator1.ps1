@@ -2,7 +2,7 @@
 
 $Threads = 1
 
-$Path = ".\Bin\Excavator-Old\excavator.exe"
+$Path = ".\Bin\Excavator-AMD\excavator.exe"
 $Uri = "https://github.com/nicehash/excavator/releases/tag/v1.2.11a"
 
 $Commands = [PSCustomObject]@{
