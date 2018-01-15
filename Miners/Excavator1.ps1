@@ -2,8 +2,8 @@
 
 $Threads = 1
 
-$Path = ".\Bin\Excavator\excavator.exe"
-$Uri = "https://github.com/nicehash/excavator/releases/"
+$Path = ".\Bin\Excavator-Old\excavator.exe"
+$Uri = "https://github.com/nicehash/excavator/releases/tag/v1.2.11a"
 
 $Commands = [PSCustomObject]@{
     #"blake2s" = @() #Blake2s
