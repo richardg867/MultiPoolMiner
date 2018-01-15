@@ -1,4 +1,4 @@
-[
+[
     {
         "Type":  "AMD",
         "Path":  ".\\Bin\\Ethash-Claymore\\EthDcrMiner64.exe",
