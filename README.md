@@ -1,6 +1,6 @@
 # Personal MultiPoolMiner Fork
 
-This is my personal MultiPoolMiner code playground, based on the MiningPoolHubStats fork. Feel free to use it.
+This is my personal MultiPoolMiner code playground, based on the MiningPoolHubStats fork. Many of this fork's changes are for the sake of "why not", but feel free to use it.
 
 ## List of changes (important notes in bold)
 
