@@ -7,6 +7,7 @@ This is my personal MultiPoolMiner code playground, based on the MiningPoolHubSt
 * Litecoin payout on supported pools through the `-walletltc yourLTCaddress` option
 * Additional Claymore dual-mining intensity values (10-15-20-25-30-35-40), takes longer to benchmark but increases profit switching granularity
 * Automatic downloading of Claymore's miners, no need to merge the fork's files with an upstream MultiPoolMiner release
+* All supported algorithms enabled on JayDDee's and TPruvot's cpuminer
 * New miners:
   * [Excavator 1.2.11](https://github.com/nicehash/excavator/releases/tag/v1.2.11a): the last version to support AMD cards
     * **If you have AMD cards, download Excavator 1.2.11** from the link above and place it in Bin/Excavator-AMD
