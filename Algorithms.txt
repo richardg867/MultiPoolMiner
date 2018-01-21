@@ -49,6 +49,7 @@
     "scryptjane:16":  "ScryptJane16",
     "scryptjanenf16":  "ScryptJane16",
     "sha256":  "SHA256",
+    "sha256d":  "SHA256",
     "sia":  "Sia",
     "sib":  "Sib",
     "sibcoinmod":  "Sib",
