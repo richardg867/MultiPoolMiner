@@ -5,7 +5,7 @@
         "Arguments":  "-r -1 -mport 13333 -o $($Pools.CryptoNight.Protocol)://$($Pools.CryptoNight.Host):$($Pools.CryptoNight.Port) -u $($Pools.CryptoNight.User) -p $($Pools.CryptoNight.Pass) -allpools 1",
         "HashRates":  {"CryptoNight":  "$($Stats.ClaymoreCpu_CryptoNight_HashRate.Week)"},
         "API":  "Claymore",
-        "Port":  "-3333",
+        "Port":  "3333",
         "Wrap":  false
         "URI":  "https://github.com/nanopool/Claymore-XMR-CPU-Miner/releases/download/v3.8/Claymore.CryptoNote.CPU.Miner.v3.8.-.POOL.zip"
     }
