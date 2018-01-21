@@ -6,7 +6,7 @@ setx GPU_USE_SYNC_OBJECTS 1
 setx GPU_MAX_ALLOC_PERCENT 100
 setx GPU_SINGLE_ALLOC_PERCENT 100
 
-set "command=& .\multipoolminer.ps1 -wallet 3DJtEaAAxt6eMkkoJYdBVvatKGTL329UJj -username jimok82 -workername multipoolminer -region us -currency btc,usd -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins -donate 24 -watchdog -switchingprevention 2 -MPHApiKey aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffff1234"
+set "command=& .\multipoolminer.ps1 -wallet 3DJtEaAAxt6eMkkoJYdBVvatKGTL329UJj -username jimok82 -workername multipoolminer -region us -currency btc,usd -type amd,nvidia,cpu -poolname miningpoolhub,miningpoolhubcoins -donate 24 -watchdog -switchingprevention 2 -minerstatusurl https://miningpoolhubstats.com/api/worker/aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffff1234 -minerstatuskey aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeeffffffffff1234"
 
 pwsh -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
 powershell -version 5.0 -noexit -executionpolicy bypass -windowstyle maximized -command "%command%"
