@@ -61,8 +61,8 @@
     "tribus":  "Tribus",
     "vanilla":  "BlakeVanilla",
     "veltor":  "Veltor",
-    "whirlpool":  "Whirlpool"
-    "whirlpoolx":  "WhirlpoolX"
+    "whirlpool":  "Whirlpool",
+    "whirlpoolx":  "WhirlpoolX",
     "x11":  "X11",
     "x11gost":  "Sib",
     "x11evo":  "X11evo",
