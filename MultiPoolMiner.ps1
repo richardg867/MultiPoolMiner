@@ -523,6 +523,9 @@ while ($true) {
     $BestMiners_Combo | ForEach-Object {$_.Best = $true}
     $BestMiners_Combo_Comparison | ForEach-Object {$_.Best_Comparison = $true}
 
+    #Close crash windows
+    $TaskKill = & taskkill /f /im WerFault.exe 2>&1
+
     #Stop or start miners in the active list depending on if they are the most profitable
     $ActiveMiners | Where-Object Activated -GT 0 | Where-Object Best -EQ $false | ForEach-Object {
         $Miner = $_
