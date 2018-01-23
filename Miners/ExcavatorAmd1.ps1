@@ -6,13 +6,9 @@ $Path = ".\Bin\Excavator-AMD\excavator.exe"
 $Uri = "https://github.com/nicehash/excavator/releases/tag/v1.2.11a"
 
 $Commands = [PSCustomObject]@{
-    #"blake2s" = @() #Blake2s
     "decred" = @() #Decred
     "daggerhashimoto" = @() #Ethash
     "equihash" = @() #Equihash
-    #"lbry" = @() #Lbry
-    #"lyra2rev2" = @() #Lyra2RE2
-    #"neoscrypt" = @() #NeoScrypt
     "pascal" = @() #Pascal
     "sia" = @() #Sia
 }
