@@ -1,9 +1,11 @@
 {
+    "bitblock":  "X15",
     "bitcore":  "Bitcore",
     "blake":  "Blakecoin",
     "blake2s":  "Blake2s",
     "blake256r8":  "Blakecoin",
     "blake256r8vnl":  "BlakeVanilla",
+    "blake256r14":  "Blake256r14",
     "blakecoin":  "Blakecoin",
     "blakevanilla":  "BlakeVanilla",
     "c11":  "C11",
