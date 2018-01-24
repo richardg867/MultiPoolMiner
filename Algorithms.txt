@@ -24,6 +24,7 @@
     "hsr":  "HSR",
     "jha":  "JHA",
     "keccak":  "Keccak",
+    "keccakc":  "KeccakC",
     "lbry":  "Lbry",
     "lyra2h":  "Lyra2h",
     "lyra2re":  "Lyra2RE",
