@@ -4,7 +4,7 @@ $Path = ".\Bin\AMD-NiceHash\sgminer.exe"
 $Uri = "https://github.com/nicehash/sgminer/releases/download/5.6.1/sgminer-5.6.1-nicehash-51-windows-amd64.zip"
 
 $Commands = [PSCustomObject]@{
-    "bitblock" = " --gpu-threads 2 --intensity d"
+    "bitblock" = " --gpu-threads 2 --intensity d" #X15
     "bitcore" = " --intensity d" #Bitcore
     "blake" = " --intensity d" #Blakecoin
     "blake256r8" = " --gpu-threads 2 --intensity d" #Blake256r8
@@ -24,8 +24,8 @@ $Commands = [PSCustomObject]@{
     "skeincoin" = " --gpu-threads 2 --worksize 256 --intensity d" #Skein
     "skunk" = " --gpu-threads 2 --intensity d" #Skunk
     "vanilla" = " --intensity d" #BlakeVanilla
-    "whirlpool" = " --intensity d"
-    "whirlpoolx" = " --intensity d"
+    "whirlpool" = " --intensity d" #Whirlpool
+    "whirlpoolx" = " --intensity d" #WhirlpoolX
     "yescrypt" = " --worksize 4 --rawintensity 256" #Yescrypt
 }
 
