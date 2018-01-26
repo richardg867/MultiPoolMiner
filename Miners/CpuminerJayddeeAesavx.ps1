@@ -1,9 +1,10 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CPU-JayDDee\cpuminer-aes-avx.exe"
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1636873/cpuminer-opt-3.7.10-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1658246/cpuminer-opt-3.8.0-windows.zip"
 
 $Commands = [PSCustomObject]@{
+    "anime" = "" #Animecoin
     "argon2" = "" #
     #"axiom" = "" #Shabal-256 MemoHash
     #"bastion" = "" #
@@ -65,6 +66,7 @@ $Commands = [PSCustomObject]@{
     #"x13sm3" = "" #hsr (Hshare)
     "x14" = "" #X14
     "x15" = "" #X15
+    "x16r" = "" #X16R (Ravencoin)
     "x17" = "" #
     "xevan" = "" #Bitsend
     #"yescrypt" = "" #Globalboost-Y (BSTY)

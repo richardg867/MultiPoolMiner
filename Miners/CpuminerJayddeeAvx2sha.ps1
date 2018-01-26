@@ -1,9 +1,10 @@
 ﻿using module ..\Include.psm1
 
-$Path = ".\Bin\CPU-JayDDee\cpuminer-4way-sha.exe"
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1636873/cpuminer-opt-3.7.10-windows.zip"
+$Path = ".\Bin\CPU-JayDDee\cpuminer-avx2-sha.exe"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1658246/cpuminer-opt-3.8.0-windows.zip"
 
 $Commands = [PSCustomObject]@{
+    #"anime" = "" #Animecoin
     #"argon2" = "" #
     #"axiom" = "" #Shabal-256 MemoHash
     #"bastion" = "" #
@@ -65,6 +66,7 @@ $Commands = [PSCustomObject]@{
     #"x13sm3" = "" #hsr (Hshare)
     #"x14" = "" #X14
     #"x15" = "" #X15
+    #"x16r" = "" #X16R (Ravencoin)
     #"x17" = "" #
     #"xevan" = "" #Bitsend
     "yescrypt" = "" #Globalboost-Y (BSTY)
@@ -76,7 +78,7 @@ $Commands = [PSCustomObject]@{
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
 $CpuInfo = & .\CHKCPU32 /X
-If ($CpuInfo -like "*<sse2>1</sse2>*" -and $CpuInfo -like "*<sha>1</sha>*") {
+If ($CpuInfo -like "*<avx2>1</avx2>*" -and $CpuInfo -like "*<sha>1</sha>*") {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         [PSCustomObject]@{
             Type = "CPU"

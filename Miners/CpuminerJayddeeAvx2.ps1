@@ -1,33 +1,34 @@
 ﻿using module ..\Include.psm1
 
-$Path = ".\Bin\CPU-JayDDee\cpuminer-sse42.exe"
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1636873/cpuminer-opt-3.7.10-windows.zip"
+$Path = ".\Bin\CPU-JayDDee\cpuminer-avx2.exe"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1658246/cpuminer-opt-3.8.0-windows.zip"
 
 $Commands = [PSCustomObject]@{
+    "anime" = "" #Animecoin
     "argon2" = "" #
-    "axiom" = "" #Shabal-256 MemoHash
-    "bastion" = "" #
+    #"axiom" = "" #Shabal-256 MemoHash
+    #"bastion" = "" #
     "blake" = "" #Blake-256 (SFR)
     "blakecoin" = "" #blake256r8
-    "blake2s" = "" #Blake-2 S
-    "bmw" = "" #BMW 256
+    #"blake2s" = "" #Blake-2 S
+    #"bmw" = "" #BMW 256
     "c11" = "" #Chaincoin
-    "cryptolight" = "" #Cryptonight-light
-    "cryptonight" = "" #cryptonote, Monero (XMR)
+    #"cryptolight" = "" #Cryptonight-light
+    #"cryptonight" = "" #cryptonote, Monero (XMR)
     "decred" = "" #
     "deep" = "" #Deepcoin (DCN)
-    "dmd-gr" = "" #Diamond-Groestl
-    "drop" = "" #Dropcoin
-    "fresh" = "" #Fresh
-    "groestl" = "" #Groestl coin
-    "heavy" = "" #Heavy
+    #"dmd-gr" = "" #Diamond-Groestl
+    #"drop" = "" #Dropcoin
+    #"fresh" = "" #Fresh
+    #"groestl" = "" #Groestl coin
+    #"heavy" = "" #Heavy
     "hmq1725" = "" #Espers
     "hodl" = "" #Hodlcoin
     "jha" = "" #Jackpotcoin
     "keccak" = "" #Maxcoin
-    "keccakc" = "" #Creative coin
+    #"keccakc" = "" #Creative coin
     "lbry" = "" #LBC, LBRY Credits
-    "luffa" = "" #Luffa
+    #"luffa" = "" #Luffa
     "lyra2h" = "" #Hppcoin
     "lyra2re" = "" #lyra2
     "lyra2rev2" = "" #lyra2v2, Vertcoin
@@ -35,29 +36,29 @@ $Commands = [PSCustomObject]@{
     "lyra2z330" = "" #Lyra2 330 rows, Zoin (ZOI)
     "m7m" = "" #Magi (XMG)
     "myr-gr" = "" #Myriad-Groestl
-    "neoscrypt" = "" #NeoScrypt(128, 2, 1)
+    #"neoscrypt" = "" #NeoScrypt(128, 2, 1)
     "nist5" = "" #Nist5
     "pentablake" = "" #Pentablake
     "phi1612" = "" #phi, LUX coin
-    "pluck" = "" #Pluck:128 (Supcoin)
+    #"pluck" = "" #Pluck:128 (Supcoin)
     "polytimos" = "" #Ninja
     "quark" = "" #Quark
     "qubit" = "" #Qubit
-    "scrypt" = "" #scrypt(1024, 1, 1) (default)
-    "scryptjane:16" = "" #
-    "sha256d" = "" #Double SHA-256
+    #"scrypt" = "" #scrypt(1024, 1, 1) (default)
+    #"scryptjane:16" = "" #
+    #"sha256d" = "" #Double SHA-256
     "sha256t" = "" #Triple SHA-256, Onecoin (OC)
-    "shavite3" = "" #Shavite3
+    #"shavite3" = "" #Shavite3
     "skein" = "" #Skein+Sha (Skeincoin)
     "skein2" = "" #Double Skein (Woodcoin)
     "skunk" = "" #Signatum (SIGT)
     "timetravel" = "" #Machinecoin (MAC)
     "timetravel10" = "" #Bitcore
     "tribus" = "" #Denarius (DNR)
-    "vanilla" = "" #blake256r8vnl (VCash)
+    #"vanilla" = "" #blake256r8vnl (VCash)
     "veltor" = "" #(VLT)
     "whirlpool" = "" #
-    "whirlpoolx" = "" #
+    #"whirlpoolx" = "" #
     "x11" = "" #Dash
     "x11evo" = "" #Revolvercoin
     "x11gost" = "" #sib (SibCoin)
@@ -65,18 +66,19 @@ $Commands = [PSCustomObject]@{
     "x13sm3" = "" #hsr (Hshare)
     "x14" = "" #X14
     "x15" = "" #X15
+    "x16r" = "" #X16R (Ravencoin)
     "x17" = "" #
     "xevan" = "" #Bitsend
-    "yescrypt" = "" #Globalboost-Y (BSTY)
-    "yescryptr8" = "" #BitZeny (ZNY)
-    "yescryptr16" = "" #Yenten (YTN)
-    "zr5" = "" #Ziftr
+    #"yescrypt" = "" #Globalboost-Y (BSTY)
+    #"yescryptr8" = "" #BitZeny (ZNY)
+    #"yescryptr16" = "" #Yenten (YTN)
+    #"zr5" = "" #Ziftr
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
 $CpuInfo = & .\CHKCPU32 /X
-If ($CpuInfo -like "*<sse42>1</sse42>*") {
+If ($CpuInfo -like "*<avx2>1</avx2>*") {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         [PSCustomObject]@{
             Type = "CPU"

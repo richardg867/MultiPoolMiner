@@ -1,4 +1,5 @@
 {
+    "anime":  "Animecoin",
     "bitblock":  "X15",
     "bitcore":  "Bitcore",
     "blake":  "Blakecoin",
@@ -77,6 +78,9 @@
     "x11gost":  "Sib",
     "x11evo":  "X11evo",
     "x13sm3":  "HSR",
+    "x14":  "X14",
+    "x15":  "X15",
+    "x16r":  "Ravencoin",
     "x17":  "X17",
     "xevan":  "Xevan",
     "xmr":  "CryptoNight",
