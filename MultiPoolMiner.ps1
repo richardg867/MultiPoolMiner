@@ -687,10 +687,6 @@ while ($true) {
                 if ($Stat -and $WatchdogTimer -and $Stat.Updated -gt $WatchdogTimer.Kicked) {
                     $WatchdogTimer.Kicked = $Stat.Updated
                 }
-
-                if ($Miner_Data.HashRate.$_ > 0) {
-                    $Miner.New = $false
-                }
             }
         }
 
