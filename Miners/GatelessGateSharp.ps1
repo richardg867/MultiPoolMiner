@@ -7,7 +7,7 @@ $Commands = [PSCustomObject]@{
     "CryptoNight" = "" #CryptoNight
     "Ethash" = "" #Ethash
     "Lyra2REv2" = "" #Lyra2RE2
-    #"Lbry" = "" #Lbry
+    "Lbry" = "" #Lbry
     "NeoScrypt" = "" #NeoScrypt
     "Pascal" = "" #Pascal
 }
@@ -22,7 +22,7 @@ if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]:
         [PSCustomObject]@{
             Type = "AMD", "NVIDIA"
             Path = $Path
-            Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false$($Commands.$_)"
+            Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Xgminer"
             Port = 4028
