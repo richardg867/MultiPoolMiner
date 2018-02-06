@@ -15,4 +15,6 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
   * ~~[Claymore CPU CryptoNight](https://bitcointalk.org/index.php?topic=647251.0)~~ *Upstreamed*
   * Ryzen SHA builds of [JayDDee's cpuminer](https://github.com/JayDDee/cpuminer-opt)
     * Most Intel CPUs don't support SHA instructions at the moment; in that case, the SHA builds will be ignored
+  * [Gateless Gate Sharp](https://github.com/zawawawa/GatelessGateSharp)
+    * Preliminary support. Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)
 * Many other minor tweaks...
