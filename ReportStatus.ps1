@@ -24,8 +24,8 @@ $minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0
         Active = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f ((Get-Date) - $_.Process.StartTime)
         Algorithm = @($_.Algorithm)
         Pool = @($MatchingMiner.Pools.PsObject.Properties.Value.Name)
-        CurrentSpeed = @($_.Speed_Live)
-        EstimatedSpeed = @($_.Speed)
+        CurrentSpeed = if ($MinerStatusURL -like "*miningpoolhubstats.com*") {@($_.Speed_Live | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})} else {@($_.Speed_Live)}
+        EstimatedSpeed = if ($MinerStatusURL -like "*miningpoolhubstats.com*") {@($_.Speed | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})} else {@($_.Speed)}
         PID = $_.Process.Id
         'BTC/day' = $_.Profit
     }
