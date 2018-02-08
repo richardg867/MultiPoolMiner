@@ -24,10 +24,10 @@ $minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0
         Active = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f ((Get-Date) - $_.Process.StartTime)
         Algorithm = @($_.Algorithm)
         Pool = @($MatchingMiner.Pools.PsObject.Properties.Value.Name)
-        CurrentSpeed = if ($MinerStatusURL -like "*miningpoolhubstats.com*") {@($_.Speed_Live | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})} else {@($_.Speed_Live)}
-        EstimatedSpeed = if ($MinerStatusURL -like "*miningpoolhubstats.com*") {@($_.Speed | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})} else {@($_.Speed)}
+        CurrentSpeed = @($_.Speed_Live | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})
+        EstimatedSpeed = @($_.Speed | Foreach-Object {"$($_ | ConvertTo-Hash)/s"})
         PID = $_.Process.Id
-        'BTC/day' = $_.Profit
+        'BTC/day' = "{0:N8}" -f $_.Profit
     }
 })
 Invoke-RestMethod -Uri $MinerStatusURL -TimeoutSec 10 -Method Post -Body @{address = $Key; workername = $WorkerName; miners = $minerreport; profit = $profit}
