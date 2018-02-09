@@ -5,9 +5,9 @@ $Uri = "https://github.com/zawawawa/GatelessGateSharp/releases/download/v1.2.18-
 
 $Commands = [PSCustomObject]@{
     "CryptoNight" = "" #CryptoNight
-    "Ethash" = "" #Ethash
+    #"Ethash" = "" #Ethash
     "Lyra2REv2" = "" #Lyra2RE2
-    "Lbry" = "" #Lbry
+    #"Lbry" = "" #Lbry
     "NeoScrypt" = "" #NeoScrypt
     "Pascal" = "" #Pascal
 }
