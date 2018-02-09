@@ -1,13 +1,16 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CPU-TPruvot\"
+$Binaries = @()
 $CpuInfo = [string](.\CHKCPU32 /X)
 If ($CpuInfo -like "*<avx2>1</avx2>*") {
-    $Path += "cpuminer-gw64-avx2.exe"
-} ElseIf ($CpuInfo -like "*<sse42>1</sse42>*") {
-    $Path += "cpuminer-gw64-corei7.exe"
-} ElseIf ($CpuInfo -like "*<ssse3>1</ssse3>*") {
-    $Path += "cpuminer-gw64-core2.exe"
+    $Binaries += "cpuminer-gw64-avx2.exe"
+}
+If ($CpuInfo -like "*<sse42>1</sse42>*") {
+    $Binaries += "cpuminer-gw64-corei7.exe"
+}
+If ($CpuInfo -like "*<ssse3>1</ssse3>*") {
+    $Binaries += "cpuminer-gw64-core2.exe"
 }
 $L3Cache = 8192
 If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
@@ -25,7 +28,6 @@ $Commands = [PSCustomObject]@{
     "sha256d" = "" # (Bitcoin, Freicoin, Peercoin/PPCoin, Terracoin, ...)
     "axiom" = "" # (Axiom Shabal-256 based MemoHash)
     "bastion" = "" # (Joincoin [J])
-    "bitcore" = "" # Permuted serie of 10 algos (BitCore)
     "blake" = "" # (Saffron [SFR] Blake-256)
     "blake2s" = "" # (NevaCoin Blake2-S 256)
     "bmw" = "" # (Midnight [MDT] BMW-256)
@@ -35,7 +37,6 @@ $Commands = [PSCustomObject]@{
     "dmd-gr" = "" # (Diamond-Groestl)
     "fresh" = "" # (FreshCoin)
     "groestl" = "" # (Groestlcoin)
-    "jha" = "" # (JackpotCoin, SweepStake)
     "lbry" = "" # (LBRY Credits [LBC])
     "lyra2re" = "" # (Cryptocoin)
     "lyra2REv2" = "" # (VertCoin [VTC])
@@ -52,7 +53,6 @@ $Commands = [PSCustomObject]@{
     "sia" = "" # (Reversed Blake2B for SIA [SC])
     "sib" = "" # X11 + gost streebog (SibCoin)
     "timetravel" = "" # Permuted serie of 8 algos (MachineCoin [MAC])
-    "tribus" = "" # 3 of the top NIST5 algos (Denarius [DNR])
     "vanilla" = "" # (Blake-256 8-rounds - double sha256 [VNL])
     "veltor" = "" # (Veltor [VLT])
     "xevan" = "" # x17 x 2 on bigger header (BitSend [BSD])
@@ -61,19 +61,33 @@ $Commands = [PSCustomObject]@{
     "x13" = "" # (Sherlockcoin, [ACE], [B2B], [GRC], [XHC], ...)
     "x14" = "" # (X14, Webcoin [WEB])
     "x15" = "" # (RadianceCoin [RCE])
-    "x16r" = "" # (Ravencoin [RVN])
     "x17" = "" # (Verge [XVG])
     "yescrypt" = "" # (GlobalBoostY [BSTY], Unitus [UIS], MyriadCoin [MYR])
     "zr5" = "" # (Ziftrcoin [ZRC])
 }
+# Algorithms which crash in specific optimization modes
+$DisableAVX2 = @("neoscrypt")
+$DisableCorei7 = @("neoscrypt")
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
-If ($Path[-1] -ne "\") {
+If ($Binaries.Length -gt 0) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
+        $Binary = 0
+        If ($_ -in $DisableAVX2) {
+            While ($Binaries[$Binary] -like "*-avx2.exe") {
+                $Binary += 1
+            }
+        }
+        If ($_ -in $DisableCorei7) {
+            While ($Binaries[$Binary] -like "*-corei7.exe") {
+                $Binary += 1
+            }
+        }
+
         [PSCustomObject]@{
             Type = "CPU"
-            Path = $Path
+            Path = $Path + $Binaries[$Binary]
             Arguments = "-a $_ -o $($Pools.(Get-Algorithm $_).Protocol)://$($Pools.(Get-Algorithm $_).Host):$($Pools.(Get-Algorithm $_).Port) -u $($Pools.(Get-Algorithm $_).User) -p $($Pools.(Get-Algorithm $_).Pass)$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Ccminer"

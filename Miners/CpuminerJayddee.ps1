@@ -1,17 +1,24 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CPU-JayDDee\"
+$Binaries = @()
 $CpuInfo = [string](.\CHKCPU32 /X)
-If ($CpuInfo -like "*<avx2>1</avx2>*" -and $CpuInfo -like "*<sha>1</sha>*") {
-    $Path += "cpuminer-avx2-sha.exe"
-} ElseIf ($CpuInfo -like "*<avx2>1</avx2>*") {
-    $Path += "cpuminer-avx2.exe"
-} ElseIf ($CpuInfo -like "*<avx>1</avx>*" -and $CpuInfo -like "*<aes>1</aes>*") {
-    $Path += "cpuminer-aes-avx.exe"
-} ElseIf ($CpuInfo -like "*<sse42>1</sse42>*" -and $CpuInfo -like "*<aes>1</aes>*") {
-    $Path += "cpuminer-aes-sse42.exe"
-} ElseIf ($CpuInfo -like "*<sse2>1</sse2>*") {
-    $Path += "cpuminer-sse2.exe"
+If ($CpuInfo -like "*<avx2>1</avx2>*") {
+    If ($CpuInfo -like "*<sha>1</sha>*") {
+        $Binaries += "cpuminer-avx2-sha.exe"
+    }
+    $Binaries += "cpuminer-avx2.exe"
+}
+If ($CpuInfo -like "*<aes>1</aes>*") {
+    If ($CpuInfo -like "*<avx>1</avx>*") {
+        $Binaries += "cpuminer-aes-avx.exe"
+    }
+    If ($CpuInfo -like "*<sse42>1</sse42>*") {
+        $Binaties += "cpuminer-aes-sse42.exe"
+    }
+}
+If ($CpuInfo -like "*<sse2>1</sse2>*") {
+    $Binaries += "cpuminer-sse2.exe"
 }
 $L3Cache = 8192
 If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
@@ -31,7 +38,6 @@ $Commands = [PSCustomObject]@{
     "blake" = "" #Blake-256 (SFR)
     "blakecoin" = "" #blake256r8
     "blake2s" = "" #Blake-2 S
-    "bmw" = "" #BMW 256
     "c11" = "" #Chaincoin
     "cryptolight" = " -t $([int]($L3Cache / 1024))" #Cryptonight-light
     "cryptonight" = " -t $([int]($L3Cache / 2048))" #cryptonote, Monero (XMR)
@@ -41,7 +47,6 @@ $Commands = [PSCustomObject]@{
     "drop" = "" #Dropcoin
     "fresh" = "" #Fresh
     "groestl" = "" #Groestl coin
-    "heavy" = "" #Heavy
     "hmq1725" = "" #Espers
     "hodl" = "" #Hodlcoin
     "jha" = "" #Jackpotcoin
@@ -68,7 +73,6 @@ $Commands = [PSCustomObject]@{
     "scryptjane:16" = "" #
     "sha256d" = "" #Double SHA-256
     "sha256t" = "" #Triple SHA-256, Onecoin (OC)
-    "shavite3" = "" #Shavite3
     "skein" = "" #Skein+Sha (Skeincoin)
     "skein2" = "" #Double Skein (Woodcoin)
     "skunk" = "" #Signatum (SIGT)
@@ -94,14 +98,29 @@ $Commands = [PSCustomObject]@{
     "yescryptr16" = "" #Yenten (YTN)
     "zr5" = "" #Ziftr
 }
+# Algorithms which crash in specific optimization modes
+$DisableAVX2 = @("c11", "neoscrypt", "polytimos", "timetravel", "timetravel10", "x11", "x11evo", "x11gost", "x13", "x13sm3", "x14", "x15", "x16r", "x17", "xevan")
+$DisableAVX = @("neoscrypt")
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
-If ($Path[-1] -ne "\") {
+If ($Binaries.Length -gt 0) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
+        $Binary = 0
+        If ($_ -in $DisableAVX2) {
+            While ($Binaries[$Binary] -like "*avx2*.exe") {
+                $Binary += 1
+            }
+        }
+        If ($_ -in $DisableAVX) {
+            While ($Binaries[$Binary] -like "*-avx.exe") {
+                $Binary += 1
+            }
+        }
+
         [PSCustomObject]@{
             Type = "CPU"
-            Path = $Path
+            Path = $Path + $Binaries[$Binary]
             Arguments = "-a $_ -o $($Pools.(Get-Algorithm $_).Protocol)://$($Pools.(Get-Algorithm $_).Host):$($Pools.(Get-Algorithm $_).Port) -u $($Pools.(Get-Algorithm $_).User) -p $($Pools.(Get-Algorithm $_).Pass)$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Ccminer"
