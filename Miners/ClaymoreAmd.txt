@@ -10,6 +10,15 @@
     },
     {
         "Type":  "AMD",
+        "Path":  ".\\Bin\\CryptoNight-Claymore\\NsGpuCNMiner.exe",
+        "Arguments":  "-r -1 -mport -13333 -xpool $($Pools.CryptoLight.Protocol)://$($Pools.CryptoLight.Host):$($Pools.CryptoLight.Port) -xwal $($Pools.CryptoLight.User) -xpsw $($Pools.CryptoLight.Pass) -lite 1",
+        "HashRates":  {"CryptoLight":  "$($Stats.ClaymoreAmd_CryptoLight_HashRate.Week)"},
+        "API":  "Claymore",
+        "Port":  "13333",
+        "URL":  "https://github.com/nanopool/Claymore-XMR-Miner/releases/download/v10.2/Claymore.CryptoNote.AMD.GPU.Miner.v10.2.Beta.-.POOL.zip"
+    },
+    {
+        "Type":  "AMD",
         "Path":  ".\\Bin\\Equihash-Claymore\\ZecMiner64.exe",
         "Arguments":  "-r -1 -mport -13333 -zpool $($Pools.Equihash.Protocol)://$($Pools.Equihash.Host):$($Pools.Equihash.Port) -zwal $($Pools.Equihash.User) -zpsw $($Pools.Equihash.Pass) -allpools 1",
         "HashRates":  {"Equihash":  "$($Stats.ClaymoreAmd_Equihash_HashRate.Week)"},
