@@ -1,6 +1,22 @@
 ﻿using module ..\Include.psm1
 
-$Path = ".\Bin\CPU-TPruvot\cpuminer-gw64-core2.exe"
+$Path = ".\Bin\CPU-TPruvot\"
+$CpuInfo = [string](.\CHKCPU32 /X)
+If ($CpuInfo -like "*<avx2>1</avx2>*") {
+    $Path += "cpuminer-gw64-avx2.exe"
+} ElseIf ($CpuInfo -like "*<sse42>1</sse42>*") {
+    $Path += "cpuminer-gw64-corei7.exe"
+} ElseIf ($CpuInfo -like "*<ssse3>1</ssse3>*") {
+    $Path += "cpuminer-gw64-core2.exe"
+}
+$L3Cache = 8192
+If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
+    $L3Cache = [int]$Matches[1]
+    If ($CpuInfo -match "<physical_cpus>(\d+)</physical_cpus>") {
+        $L3Cache *= [int]$Matches[1]
+    }
+}
+
 $Uri = "https://github.com/tpruvot/cpuminer-multi/releases/download/v1.3.1-multi/cpuminer-multi-rel1.3.1-x64.zip"
 
 $Commands = [PSCustomObject]@{
@@ -13,8 +29,8 @@ $Commands = [PSCustomObject]@{
     "blake" = "" # (Saffron [SFR] Blake-256)
     "blake2s" = "" # (NevaCoin Blake2-S 256)
     "bmw" = "" # (Midnight [MDT] BMW-256)
-    "cryptonight" = "" # (Bytecoin [BCN], Monero [XMR])
-    "cryptonight-light" = "" # (Aeon)
+    "cryptonight" = " -t $($L3Cache / 2048)" # (Bytecoin [BCN], Monero [XMR])
+    "cryptonight-light" = " -t $($L3Cache / 1024)" # (Aeon)
     "decred" = "" # (Blake256-14 [DCR])
     "dmd-gr" = "" # (Diamond-Groestl)
     "fresh" = "" # (FreshCoin)
@@ -53,8 +69,7 @@ $Commands = [PSCustomObject]@{
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
-$CpuInfo = & .\CHKCPU32 /X
-If ($CpuInfo -like "*<ssse3>1</ssse3>*") {
+If ($Path[-1] -ne "\") {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         [PSCustomObject]@{
             Type = "CPU"
