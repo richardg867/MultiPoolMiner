@@ -1,24 +1,11 @@
 [
-	{
-	    "Type":  "CPU",
-	    "Path":  ".\\Bin\\CryptoNight-CPU\\xmrig.exe",
-	    "Arguments":  "\"--api-port 3334 -a cryptonight -o $($Pools.CryptoNight.Protocol)://$($Pools.CryptoNight.Host):$($Pools.CryptoNight.Port) -u $($Pools.CryptoNight.User) -p $($Pools.CryptoNight.Pass) --keepalive --nicehash --donate-level 1\"",
-	    "HashRates":  {
-	                      "CryptoNight":  "\"$(if ($Pools.CryptoNight.SSL) {0}else {$Stats.XmrigCpu_CryptoNight_HashRate.Week})\""
-	                  },
-	    "API":  "XMRig",
-	    "Port":  "3334",
-	    "URI":  "https://github.com/xmrig/xmrig/releases/download/v2.4.4/xmrig-2.4.4-msvc-win64.zip"
-	},
-	{
-	    "Type":  "CPU",
-	    "Path":  ".\\Bin\\CryptoNight-CPU\\xmrig.exe",
-	    "Arguments":  "\"--api-port 3334 -a cryptonight-lite -o $($Pools.CryptoLight.Protocol)://$($Pools.CryptoLight.Host):$($Pools.CryptoLight.Port) -u $($Pools.CryptoLight.User) -p $($Pools.CryptoLight.Pass) --keepalive --nicehash --donate-level 1\"",
-	    "HashRates":  {
-	                      "CryptoLight":  "\"$(if ($Pools.CryptoLight.SSL) {0}else {$Stats.XmrigCpu_CryptoLight_HashRate.Week})\""
-	                  },
-	    "API":  "XMRig",
-	    "Port":  "3334",
-	    "URI":  "https://github.com/xmrig/xmrig/releases/download/v2.4.4/xmrig-2.4.4-msvc-win64.zip"
-	}
+    {
+        "Type":  "CPU",
+        "Path":  ".\\Bin\\CryptoNight-CPU\\xmrig.exe",
+        "Arguments":  "--api-port 3334 -a cryptonight -o $($Pools.CryptoNight.Protocol)://$($Pools.CryptoNight.Host):$($Pools.CryptoNight.Port) -u $($Pools.CryptoNight.User) -p $($Pools.CryptoNight.Pass) --keepalive --nicehash --donate-level 1",
+        "HashRates":  {"CryptoNight":  "$(if ($Pools.CryptoNight.SSL) {0}else {$Stats.XmrigCpu_CryptoNight_HashRate.Week})"},
+        "API":  "XMRig",
+        "Port":  "3334",
+        "URI":  "https://github.com/xmrig/xmrig/releases/download/v2.4.4/xmrig-2.4.4-msvc-win64.zip"
+    }
 ]
