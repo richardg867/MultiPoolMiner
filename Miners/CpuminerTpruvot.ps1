@@ -12,7 +12,7 @@ If ($CpuInfo -like "*<sse42>1</sse42>*") {
 If ($CpuInfo -like "*<ssse3>1</ssse3>*") {
     $Binaries += "cpuminer-gw64-core2.exe"
 }
-$L3Cache = 8192
+$L3Cache = 0
 If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     $L3Cache = [int]$Matches[1]
     If ($CpuInfo -match "<physical_cpus>(\d+)</physical_cpus>") {
@@ -31,8 +31,8 @@ $Commands = [PSCustomObject]@{
     "blake" = "" # (Saffron [SFR] Blake-256)
     "blake2s" = "" # (NevaCoin Blake2-S 256)
     "bmw" = "" # (Midnight [MDT] BMW-256)
-    "cryptonight" = " -t $([int]($L3Cache / 2048))" # (Bytecoin [BCN], Monero [XMR])
-    "cryptonight-light" = " -t $([int]($L3Cache / 1024))" # (Aeon)
+    "cryptonight" = " -t $([Math]::Max([int]($L3Cache / 2048), 1))" # (Bytecoin [BCN], Monero [XMR])
+    "cryptonight-light" = " -t $([Math]::Max([int]($L3Cache / 1024), 1))" # (Aeon)
     "decred" = "" # (Blake256-14 [DCR])
     "dmd-gr" = "" # (Diamond-Groestl)
     "fresh" = "" # (FreshCoin)
