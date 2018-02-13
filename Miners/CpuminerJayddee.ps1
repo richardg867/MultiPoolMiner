@@ -28,7 +28,7 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1704854/cpuminer-opt-3.8.1-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1713005/cpuminer-opt-3.8.1.1-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "anime" = "" #Animecoin
@@ -99,7 +99,7 @@ $Commands = [PSCustomObject]@{
     "zr5" = "" #Ziftr
 }
 # Algorithms which crash in specific optimization modes
-$DisableAVX2 = @("c11", "neoscrypt", "polytimos", "timetravel", "timetravel10", "x11", "x11evo", "x11gost", "x13", "x13sm3", "x14", "x15", "x16r", "x17", "xevan")
+$DisableAVX2 = @("neoscrypt")
 $DisableAVX = @("neoscrypt")
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
