@@ -28,9 +28,10 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1713005/cpuminer-opt-3.8.1.1-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1729154/cpuminer-opt-3.8.2-windows.zip"
 
 $Commands = [PSCustomObject]@{
+    "allium" = "" #Garlicoin
     "anime" = "" #Animecoin
     "argon2" = "" #
     "axiom" = "" #Shabal-256 MemoHash
@@ -86,6 +87,7 @@ $Commands = [PSCustomObject]@{
     "x11" = "" #Dash
     "x11evo" = "" #Revolvercoin
     "x11gost" = "" #sib (SibCoin)
+    "x12" = "" #Galaxy Cash
     "x13" = "" #X13
     "x13sm3" = "" #hsr (Hshare)
     "x14" = "" #X14
