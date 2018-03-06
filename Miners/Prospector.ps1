@@ -6,6 +6,7 @@ $Uri = "https://github.com/semtexzv/Prospector/releases/download/0.0.13-ALPHA/pr
 $Commands = [PSCustomObject]@{
     "xmr" = @() #CryptoNight
     "eth" = @() #Ethash
+    "sia" = @() #Sia
     "sigt" = @() #Skunk
 }
 
