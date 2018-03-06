@@ -17,7 +17,6 @@ $Commands = [PSCustomObject]@{
     "neoscrypt" = @() #NeoScrypt
     "nist5" = @() #nist5
     "pascal" = @() #Pascal
-    "sia" = @() #Sia
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
