@@ -46,3 +46,44 @@ $Port = 3336
     Port      = $Port
     URI       = $Uri
 }
+
+([PSCustomObject]@{
+        pool_list       = @([PSCustomObject]@{
+                pool_address    = "$($Pools.CryptoLight.Host):$($Pools.CryptoLight.Port)"
+                wallet_address  = "$($Pools.CryptoLight.User)"
+                pool_password   = "$($Pools.CryptoLight.Pass)"
+                use_nicehash    = $true
+                use_tls         = $Pools.CryptoLight.SSL
+                tls_fingerprint = ""
+                pool_weight     = 1
+            }
+        )
+        currency        = "aeon"
+        call_timeout    = 10
+        retry_time      = 10
+        giveup_limit    = 0
+        verbose_level   = 3
+        print_motd      = $true
+        h_print_time    = 60
+        aes_override    = $null
+        use_slow_memory = "warn"
+        tls_secure_algo = $true
+        daemon_mode     = $false
+        flush_stdout    = $false
+        output_file     = ""
+        httpd_port      = $Port
+        http_login      = ""
+        http_pass       = ""
+        prefer_ipv4     = $true
+    } | ConvertTo-Json -Depth 10
+) -replace "^{" -replace "}$" | Set-Content "$(Split-Path $Path)\$($Pools.CryptoLight.Name)_CryptoLight_$($Pools.CryptoLight.User)_Amd.txt" -Force -ErrorAction SilentlyContinue
+
+[PSCustomObject]@{
+    Type      = "AMD"
+    Path      = $Path
+    Arguments = "-c $($Pools.CryptoLight.Name)_CryptoNight_$($Pools.CryptoLight.User)_Amd.txt --noUAC --noCPU --noNVIDIA"
+    HashRates = [PSCustomObject]@{CryptoLight = $Stats."$($Name)_CryptoLight_HashRate".Week}
+    API       = "XMRig"
+    Port      = $Port
+    URI       = $Uri
+}
