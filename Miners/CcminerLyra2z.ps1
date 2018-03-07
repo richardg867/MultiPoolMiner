@@ -6,6 +6,7 @@ $Uri = "https://github.com/djm34/ccminer-msvc2015/releases/download/v0.3.0/ccmin
 $Commands = [PSCustomObject]@{
     "lyra2h" = "" #Lyra2h
     "lyra2z" = "" #Lyra2z
+    "m7" = "" #M7
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
