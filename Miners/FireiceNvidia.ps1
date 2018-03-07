@@ -81,7 +81,7 @@ $Port = 3335
 [PSCustomObject]@{
     Type      = "NVIDIA"
     Path      = $Path
-    Arguments = "-c $($Pools.CryptoLight.Name)_CryptoNight_$($Pools.CryptoLight.User)_Nvidia.txt --noUAC --noAMD --noCPU"
+    Arguments = "-c $($Pools.CryptoLight.Name)_CryptoLight_$($Pools.CryptoLight.User)_Nvidia.txt --noUAC --noAMD --noCPU"
     HashRates = [PSCustomObject]@{CryptoLight = $Stats."$($Name)_CryptoLight_HashRate".Week}
     API       = "XMRig"
     Port      = $Port
