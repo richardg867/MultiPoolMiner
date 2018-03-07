@@ -124,6 +124,8 @@ $Currencies | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-O
             "qubit"     {$Divisor *= 1000}
             "scrypt"    {$Divisor *= 1000}
             "x11"       {$Divisor *= 1000}
+            "keccakc"   {$Divisor *= 1000}
+            "phi"       {$Divisor *= 1000}
         }
 
         $Stat = Set-Stat -Name "$($Name)Currencies_$($ZergPool_Algorithm_Norm)_Profit" -Value ([Double]$ZergPoolCurrencies_Request.$MiningCurrency.estimate / $Divisor) -Duration $StatSpan -ChangeDetection $true
