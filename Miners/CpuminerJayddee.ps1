@@ -28,7 +28,7 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1756603/cpuminer-opt-3.8.3.3-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1838763/cpuminer-opt-3.8.4.1-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "allium" = "" #Garlicoin
@@ -98,6 +98,7 @@ $Commands = [PSCustomObject]@{
     "yescrypt" = "" #Globalboost-Y (BSTY)
     "yescryptr8" = "" #BitZeny (ZNY)
     "yescryptr16" = "" #Yenten (YTN)
+    "yescryptr32" = "" #WAVI
     "zr5" = "" #Ziftr
 }
 # Algorithms which crash in specific optimization modes
