@@ -9,13 +9,8 @@ If ($CpuInfo -like "*<avx2>1</avx2>*") {
     }
     $Binaries += "cpuminer-avx2.exe"
 }
-If ($CpuInfo -like "*<aes>1</aes>*") {
-    If ($CpuInfo -like "*<avx>1</avx>*") {
-        $Binaries += "cpuminer-aes-avx.exe"
-    }
-    If ($CpuInfo -like "*<sse42>1</sse42>*") {
-        $Binaties += "cpuminer-aes-sse42.exe"
-    }
+If ($CpuInfo -like "*<aes>1</aes>*" -and $CpuInfo -like "*<sse42>1</sse42>*") {
+    $Binaries += "cpuminer-aes-sse42.exe"
 }
 If ($CpuInfo -like "*<sse2>1</sse2>*") {
     $Binaries += "cpuminer-sse2.exe"
@@ -28,12 +23,15 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1838763/cpuminer-opt-3.8.4.1-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1899884/cpuminer-opt-3.8.7.2-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "allium" = "" #Garlicoin
     "anime" = "" #Animecoin
     "argon2" = "" #
+    "argon2d250" = "" #Argon2d-CRDS
+    "argon2d500" = "" #Argon2d-DYN
+    "argon2d4096" = "" #Argon2d-UIS
     "axiom" = "" #Shabal-256 MemoHash
     "bastion" = "" #
     "blake" = "" #Blake-256 (SFR)
@@ -93,6 +91,7 @@ $Commands = [PSCustomObject]@{
     "x14" = "" #X14
     "x15" = "" #X15
     "x16r" = "" #Ravencoin
+    "x16s" = "" #Pigeoncoin
     "x17" = "" #
     "xevan" = "" #Bitsend
     "yescrypt" = "" #Globalboost-Y (BSTY)
@@ -101,22 +100,16 @@ $Commands = [PSCustomObject]@{
     "yescryptr32" = "" #WAVI
     "zr5" = "" #Ziftr
 }
-# Algorithms which crash in specific optimization modes
-$DisableAVX2 = @("neoscrypt")
-$DisableAVX = @("neoscrypt")
+# Algorithms which crash in AVX modes
+$ForceLegacy = @("neoscrypt")
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
 If ($Binaries.Length -gt 0) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         $Binary = 0
-        If ($_ -in $DisableAVX2) {
-            While ($Binaries[$Binary] -like "*avx2*.exe") {
-                $Binary += 1
-            }
-        }
-        If ($_ -in $DisableAVX) {
-            While ($Binaries[$Binary] -like "*-avx.exe") {
+        If ($_ -in $ForceLegacy) {
+            While ($Binaries[$Binary] -notlike "*-sse2.exe") {
                 $Binary += 1
             }
         }
