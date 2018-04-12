@@ -14,7 +14,7 @@ $Commands = [PSCustomObject]@{
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
-$Port = 3456 + (1 * 10000)
+$Port = 3456 + (0 * 10000)
 
 $DeviceID = 0; 
 $DeviceIDs = @([OpenCl.Platform]::GetPlatformIDs() | ForEach-Object {[OpenCl.Device]::GetDeviceIDs($_, [OpenCl.DeviceType]::All)} | Where-Object {$_.Type -eq 'GPU' -and $_.Vendor -eq 'Advanced Micro Devices, Inc.'} | ForEach-Object {$DeviceID; $DeviceID++} | Select-Object)
