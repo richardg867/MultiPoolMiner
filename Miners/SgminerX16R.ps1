@@ -1,10 +1,11 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\X16R-AMD\sgminer.exe"
-$Uri = "https://github.com/aceneun/sgminer-gm-x16r/releases/download/5.5.5-x16r/sgminer-x16r.zip"
+$Uri = "https://github.com/brian112358/sgminer-x16r/releases/download/v0.4.0/sgminer-x16r-v0.4.0-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "x16r" = " --intensity 19" #X16R (Ravencoin)
+    "x16s" = " --intensity 19" #X16S (Pigeoncoin)
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
