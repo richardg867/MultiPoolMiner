@@ -23,7 +23,7 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1899884/cpuminer-opt-3.8.7.2-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1939225/cpuminer-opt-3.8.8-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "allium" = "" #Garlicoin
@@ -40,6 +40,7 @@ $Commands = [PSCustomObject]@{
     "c11" = "" #Chaincoin
     "cryptolight" = " -t $([Math]::Max([int]($L3Cache / 1024), 1))" #Cryptonight-light
     "cryptonight" = " -t $([Math]::Max([int]($L3Cache / 2048), 1))" #cryptonote, Monero (XMR)
+    "cryptonightv7" = " -t $([Math]::Max([int]($L3Cache / 2048), 1))" #Cryptonight V7
     "decred" = "" #
     "deep" = "" #Deepcoin (DCN)
     "dmd-gr" = "" #Diamond-Groestl
