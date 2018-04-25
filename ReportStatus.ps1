@@ -8,10 +8,10 @@ param(
 )
 
 Write-Log "Pinging monitoring server."
-$profit = ($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.Status -eq "Running"} | Measure-Object Profit -Sum).Sum | ConvertTo-Json
+$profit = ($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.GetStatus() -eq "Running"} | Measure-Object Profit -Sum).Sum | ConvertTo-Json
 
 # Format the miner values for reporting.  Set relative path so the server doesn't store anything personal (like your system username, if running from somewhere in your profile)
-$minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.Status -eq "Running"} | Foreach-Object {
+$minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.GetStatus() -eq "Running"} | Foreach-Object {
 $ActiveMiner = $_
 # Find the matching entry in $Miners, to get pool information. Perhaps there is a better way to do this?
 $MatchingMiner = $ActiveMiners | Where-Object {$_.Name -eq $ActiveMiner.Name -and $_.Path -eq $ActiveMiner.Path -and $_.Arguments -eq $ActiveMiner.Arguments -and $_.Wrap -eq $ActiveMiner.Wrap -and $_.API -eq $ActiveMiner.API -and $_.Port -eq $ActiveMiner.Port}
