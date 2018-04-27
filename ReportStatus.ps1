@@ -18,12 +18,11 @@ $MatchingMiner = $ActiveMiners | Where-Object {$_.Name -eq $ActiveMiner.Name -an
 # Create a custom object to convert to json. Type, Pool, CurrentSpeed and EstimatedSpeed are all forced to be arrays, since they sometimes have multiple values.
     [pscustomobject]@{
         Name           = $_.Name
-        Version        = "0.0.0.0"
         Path           = Resolve-Path -Relative $_.Path
         Type           = @($_.Type)
         Active         = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f $_.GetActiveTime()
         Algorithm      = @($_.Algorithm)
-        Pool           = @($MatchingMiner.Pools.PsObject.Properties.Value.Name)
+        Pool           = @($_.Pool)
         CurrentSpeed   = @($_.Speed_Live)
         EstimatedSpeed = @($_.Speed)
         'BTC/day'      = $_.Profit
