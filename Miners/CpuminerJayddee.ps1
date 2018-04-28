@@ -110,7 +110,7 @@ If ($Binaries.Length -gt 0) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         $Binary = 0
         If ($_ -in $ForceLegacy) {
-            While ($Binaries[$Binary] -notlike "*-sse2.exe") {
+            While ($Binaries[$Binary] -like "*avx*") {
                 $Binary += 1
             }
         }

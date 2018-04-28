@@ -1,20 +1,39 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CryptoNight-FireIce\xmr-stak.exe"
-$Uri = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.2/xmr-stak-win64.zip"
+$Uri = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.3/xmr-stak-win64.zip"
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 $Port = 3336
 
 $Commands = [PSCustomObject]@{
     "cryptonight" = "" #CryptoNight
+    "cryptonight_heavy" = "" # CryptoNight-Heavy
     "cryptonight_lite" = "" # CryptoNight-Lite
-    "cryptonightV7" = "" #CryptoNightV7
+    "cryptonight_lite_v7" = "" # CryptoNight-Lite V7
+    "cryptonight_v7" = "" #CryptoNightV7
+}
+$Currencies = [PSCustomObject]@{
+    "aeon" = "aeon7"
+    "bbscoin" = "bbscoin"
+    "croat" = "croat"
+    "edollar" = "edollar"
+    "electroneum" = "electroneum"
+    "graft" = "graft"
+    "haven" = "haven"
+    "intense" = "intense"
+    "karbo" = "karbo"
+    "monero" = "monero7"
+    "sumokoin" = "sumokoin"
 }
 
 $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.$(Get-Algorithm $_)} | ForEach-Object {
 
     $Algorithm_Norm = Get-Algorithm $_
+    $Currency = ""
+    If ($Pools.$Algorithm_Norm.Info) {
+        $Currency = $Currencies.$($Pools.$Algorithm_Norm.Info)
+    }
 
     ([PSCustomObject]@{
             pool_list       = @([PSCustomObject]@{
@@ -28,7 +47,7 @@ $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty 
                     rig_id = ""
                 }
             )
-            currency        = if ($Pools.$Algorithm_Norm.Info) {"$($Pools.$Algorithm_Norm.Info -replace '^monero$', 'monero7' -replace '^aeon$', 'aeon7')"} else {"$_"}
+            currency        = if ($Currency) {"$Currency"} else {"$_"}
             call_timeout    = 10
             retry_time      = 10
             giveup_limit    = 0
