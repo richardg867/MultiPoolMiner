@@ -15,7 +15,7 @@ $Commands = [PSCustomObject]@{
 }
 $Currencies = [PSCustomObject]@{
     "aeon" = "aeon7"
-    "bbscoin" = "bbscoin"
+    "bbs" = "bbscoin"
     "croat" = "croat"
     "edollar" = "edollar"
     "electroneum" = "electroneum"
@@ -32,7 +32,7 @@ $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty 
     $Algorithm_Norm = Get-Algorithm $_
     $Currency = ""
     If ($Pools.$Algorithm_Norm.Info) {
-        $Currency = $Currencies.$($Pools.$Algorithm_Norm.Info)
+        $Currency = $Currencies.$($Pools.$Algorithm_Norm.Info -replace "coin$")
     }
 
     ([PSCustomObject]@{
