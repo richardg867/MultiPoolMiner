@@ -372,6 +372,9 @@ function Expand-WebRequest {
         [String]$Path = ""
     )
 
+    # Set current path used by .net methods to the same as the script's path
+    [Environment]::CurrentDirectory = $ExecutionContext.SessionState.Path.CurrentFileSystemLocation
+
     if (-not $Path) {$Path = Join-Path ".\Downloads" ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName}
     if (-not (Test-Path ".\Downloads")) {New-Item "Downloads" -ItemType "directory" | Out-Null}
     $FileName = Join-Path ".\Downloads" (Split-Path $Uri -Leaf)
@@ -434,25 +437,6 @@ function Invoke-TcpRequest {
     }
 
     $Response
-}
-
-function Get-CryptonightAlgorithm { # temp fix for Cryptonight hard fork
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $false)]
-        [String]$Coinname = ""
-    )
-
-    Switch ($Coinname) {
-        "Monero"     {$Algorithm = "CryptonightV7"}
-        "Aeon"       {$Algorithm = "CryptonightV7"}
-        "Graft"      {$Algorithm = "CryptonightV7"}
-        "Stellite"   {$Algorithm = "CryptonightV7"}
-        "Sumokoin"   {$Algorithm = "CryptonightHeavy"}
-        "Turtlecoin" {$Algorithm = "CryptonightLite"}
-        default      {$Algorithm = "Cryptonight"}
-    }
-    return $Algorithm
 }
 
 function Get-Algorithm {

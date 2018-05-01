@@ -101,7 +101,7 @@
     "x16s":  "X16S",
     "x17":  "X17",
     "xevan":  "Xevan",
-    "xmr":  "CryptoNight",
+    "xmr":  "CryptoNightV7",
     "yescrypt":  "Yescrypt",
     "yescryptr8":  "YescryptR8",
     "yescryptr16":  "YescryptR16",
