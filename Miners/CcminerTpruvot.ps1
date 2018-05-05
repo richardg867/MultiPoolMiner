@@ -1,7 +1,7 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\NVIDIA-TPruvot\ccminer-x64.exe"
-$Uri = "https://github.com/MSFTserver/ccminer/releases/download/2.2.5-rvn/ccminer-x64-2.2.5-rvn-cuda9.7z"
+$Uri = "https://github.com/tpruvot/ccminer/releases/download/2.2.5-tpruvot/ccminer-x64-2.2.5-cuda9.7z"
 
 $Commands = [PSCustomObject]@{
     "bastion" = "" #Hefty bastion
@@ -17,10 +17,12 @@ $Commands = [PSCustomObject]@{
     "deep" = "" #Deepcoin
     "dmd-gr" = "" #Diamond-Groestl
     "equihash" = "" #Equihash
+    #"ethash" = "" #Ethash
     "fresh" = "" #Freshcoin (shavite 80)
     "fugue256" = "" #Fuguecoin
     "groestl" = "" #Groestl
     "hmq1725" = "" #HMQ1725
+    "jha" = "" #JHA
     "jackpot" = "" #JHA v8
     "keccak" = "" #Keccak
     "keccakc" = "" #Keccak-256 (CreativeCoin)
@@ -32,6 +34,7 @@ $Commands = [PSCustomObject]@{
     "myr-gr" = "" #MyriadGroestl
     "neoscrypt" = "" #NeoScrypt
     "nist5" = "" #Nist5
+    #"pascal" = "" #Pascal
     "penta" = "" #Pentablake hash (5x Blake 512)
     "phi" = "" #PHI
     "polytimos" = "" #Polytimos
@@ -54,11 +57,14 @@ $Commands = [PSCustomObject]@{
     "whirlpool" = "" #Whirlpool algo
     "x11evo" = "" #X11evo
     "x11" = "" #X11 (DarkCoin)
+    "x12" = "" #X12
     "x13" = "" #X13 (MaruCoin)
     "x14" = "" #X14
     "x15" = "" #X15
     "x16r" = "" #Raven
     "x17" = "" #X17
+    #"yescrypt" = "" #Yescrypt
+    #"xevan" = "" #Xevan
     "wildkeccak" = "" #Boolberry
     "zr5" = "" #ZR5 (ZiftrCoin)
 }
