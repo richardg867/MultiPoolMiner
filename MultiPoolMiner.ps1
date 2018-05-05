@@ -84,6 +84,7 @@ $DecayBase = 1 - 0.1 #decimal percentage
 
 $WatchdogTimers = @()
 $ActiveMiners = @()
+$Benchmarking = $false
 $Rates = [PSCustomObject]@{BTC = [Double]1}
 
 #Start the log
@@ -221,7 +222,7 @@ while ($true) {
     $Timer = (Get-Date).ToUniversalTime()
 
     $StatStart = $StatEnd
-    $StatEnd = $Timer.AddSeconds($Config.Interval)
+    $StatEnd = $Timer.AddSeconds($(if ($Benchmarking) {600} else {$Config.Interval}))
     $StatSpan = New-TimeSpan $StatStart $StatEnd
 
     $DecayExponent = [int](($Timer - $DecayStart).TotalSeconds / $DecayPeriod)
@@ -443,6 +444,7 @@ while ($true) {
         $_.Best = $false
         $_.Best_Comparison = $false
     }
+    $Benchmarking = $false
     $Miners | ForEach-Object {
         $Miner = $_
         $ActiveMiner = $ActiveMiners | Where-Object {
@@ -493,6 +495,12 @@ while ($true) {
                 Pool                 = $Miner.Pools.PSObject.Properties.Value.Name
             }
         }
+        $Miner.HashRates.PSObject.Properties.Value | ForEach-Object {if ($_ -eq $null) {$Benchmarking = $true}}
+    }
+    if ($Benchmarking -and $Config.Interval -lt 600) {
+        Write-Log "Benchmark running, temporarily increasing interval to 10 minutes for the next run. "
+    } else {
+        $Benchmarking = $false
     }
     $ActiveMiners | Where-Object Device_Auto | ForEach-Object {
         $Miner = $_
