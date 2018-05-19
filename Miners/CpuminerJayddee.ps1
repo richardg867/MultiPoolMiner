@@ -23,7 +23,7 @@ If ($CpuInfo -match "<l3>(\d+) KB</l3>") {
     }
 }
 
-$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1939225/cpuminer-opt-3.8.8-windows.zip"
+$Uri = "https://github.com/JayDDee/cpuminer-opt/files/1996977/cpuminer-opt-3.8.8.1-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "allium" = "" #Garlicoin
