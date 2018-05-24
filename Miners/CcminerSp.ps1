@@ -32,24 +32,24 @@ $Commands = [PSCustomObject]@{
     "x17" = "" #x17
 
     # ASIC - never profitable 27/03/2018
-    #"blake" = "" #blake
-    #"blakecoin" = "" #Blakecoin
-    #"blake2s" = "" #Blake2s
-    #"decred" = "" #Decred
-    #"lbry" = "" #Lbry
-    #"myr-gr" = "" #MyriadGroestl
-    #"nist5" = "" #Nist5
-    #"quark" = "" #Quark
-    #"qubit" = "" #Qubit
-    #"scrypt" = "" #Scrypt
-    #"scrypt:N" = "" #scrypt:N
-    #"sha256d" = "" #sha256d Bitcoin
-    #"sia" = "" #SiaCoin
-    #"vanilla" = "" #BlakeVanilla
-    #"x11" = "" #X11
-    #"x13" = "" #x13
-    #"x14" = "" #x14
-    #"x15" = "" #x15
+    "blake" = "" #blake
+    "blakecoin" = "" #Blakecoin
+    "blake2s" = "" #Blake2s
+    "decred" = "" #Decred
+    "lbry" = "" #Lbry
+    "myr-gr" = "" #MyriadGroestl
+    "nist5" = "" #Nist5
+    "quark" = "" #Quark
+    "qubit" = "" #Qubit
+    "scrypt" = "" #Scrypt
+    "scrypt:N" = "" #scrypt:N
+    "sha256d" = "" #sha256d Bitcoin
+    "sia" = "" #SiaCoin
+    "vanilla" = "" #BlakeVanilla
+    "x11" = "" #X11
+    "x13" = "" #x13
+    "x14" = "" #x14
+    "x15" = "" #x15
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName

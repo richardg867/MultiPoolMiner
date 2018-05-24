@@ -16,12 +16,10 @@ $Commands = [PSCustomObject]@{
     "x11evo"    = "" #X11evo
 
     # ASIC - never profitable 12/05/2018
-    #"decred" = "" #Decred
-    #"lbry" = "" #Lbry
-    #"myr-gr" = "" #MyriadGroestl
-    #"nist5" = "" #Nist5
-    #"sib" = "" #Sib
-    
+    "decred" = "" #Decred
+    "lbry" = "" #Lbry
+    "myr-gr" = "" #MyriadGroestl
+    "nist5" = "" #Nist5
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName

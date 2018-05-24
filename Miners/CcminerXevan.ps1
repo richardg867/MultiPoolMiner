@@ -13,14 +13,14 @@ $Commands = [PSCustomObject]@{
     "xevan"     = "" #Xevan
     
     # ASIC - never profitable 12/05/2018
-    #"decred"   = "" #Decred
-    #"lbry"     = "" #Lbry
-    #"myr-gr"   = "" #MyriadGroestl
-    #"nist5"    = "" #Nist5
-    #"qubit"    = "" #Qubit
-    #"quark"    = "" #Quark
-    #"x12"      = "" #X12
-    #"x14"      = "" #X14
+    "decred"   = "" #Decred
+    "lbry"     = "" #Lbry
+    "myr-gr"   = "" #MyriadGroestl
+    "nist5"    = "" #Nist5
+    "qubit"    = "" #Qubit
+    "quark"    = "" #Quark
+    "x12"      = "" #X12
+    "x14"      = "" #X14
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
