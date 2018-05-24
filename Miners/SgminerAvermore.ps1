@@ -5,7 +5,6 @@ $HashSHA256 = "7662486F3B07C2B72F114E25757449967D2219C3F59CAF9384EDF6912251D969"
 $Uri = "https://github.com/brian112358/avermore-miner/releases/download/v1.4/avermore-v1.4-windows.zip"
 
 $Commands = [PSCustomObject]@{
-    "blake"       = " --intensity d" #Blakecoin
     "blake256r8"  = " --gpu-threads 2 --intensity d" #Blake256r8
     "blake256r14" = " --gpu-threads 2 --intensity d" #Blake256r14
     "maxcoin"     = " --gpu-threads 2 --intensity d" #Keccak

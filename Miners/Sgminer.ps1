@@ -7,7 +7,6 @@ $Uri = "https://github.com/nicehash/sgminer/releases/download/5.6.1/sgminer-5.6.
 $Commands = [PSCustomObject]@{
     "bitblock" = " --gpu-threads 2 --intensity d" #X15
     "bitcore" = " --intensity d" #Bitcore
-    "blake" = " --intensity d" #Blakecoin
     "blake256r8" = " --gpu-threads 2 --intensity d" #Blake256r8
     "blake256r14" = " --gpu-threads 2 --intensity d" #Blake256r14
     "darkcoin-mod" = " --gpu-threads 2 --intensity d" #X11
