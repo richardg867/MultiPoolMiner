@@ -1,6 +1,13 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CPU-JayDDee\"
+$HashSHA256 = [PSCustomObject]@{
+    "cpuminer-aes-sse42.exe" = "01E0C00B21396E982D09DBCF23F766BA69344829A9DD1E5409975971A620AC3D"
+    "cpuminer-avx.exe"       = "3D72E0F130E6104C0E1117DE887B5E55CC4A8C77E17A8B646A2580A9873A6381"
+    "cpuminer-avx2.exe"      = "8F37B5BAD9D6A3AE1BA488C680B7DE2B244D1D012BCE105E6C2C7AB86DEEF6D0"
+    "cpuminer-avx2-sha.exe"  = "188066A1767071CEF10D74DFA8A0F629FCACBDF28C98E1D2DAA89519F923D415"
+    "cpuminer-sse2.exe"      = "3DEC184FA2E26CF3A474FDFFED8FF1AD61A51E9E7A85D48547FE99C801FB7380"
+}
 $Binaries = @()
 $CpuInfo = [string](.\CHKCPU32 /X)
 If ($CpuInfo -like "*<avx2>1</avx2>*") {
@@ -118,6 +125,7 @@ If ($Binaries.Length -gt 0) {
         [PSCustomObject]@{
             Type = "CPU"
             Path = $Path + $Binaries[$Binary]
+            HashSHA256 = $HashSHA256[$Binaries[$Binary]]
             Arguments = "-a $_ -o $($Pools.(Get-Algorithm $_).Protocol)://$($Pools.(Get-Algorithm $_).Host):$($Pools.(Get-Algorithm $_).Port) -u $($Pools.(Get-Algorithm $_).User) -p $($Pools.(Get-Algorithm $_).Pass)$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Ccminer"

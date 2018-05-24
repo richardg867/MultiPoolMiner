@@ -1,6 +1,11 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CPU-TPruvot\"
+$HashSHA256 = [PSCustomObject]@{
+    "cpuminer-gw64-avx2.exe"   = "1F7ACE389009B0CB13D048BEDBBECCCDD3DDD723892FD2E2F6F3032D999224DC"
+    "cpuminer-gw64-core2.exe"  = "3EA2A09BE5CFFC0501FC07F6744233A351371E2CF93F544768581EE1E6613454"
+    "cpuminer-gw64-corei7.exe" = "ACA0750061AC1F51ED89904DCA987982C51A8DEB95963EBFBBBB434CB760D2C6"
+}
 $Binaries = @()
 $CpuInfo = [string](.\CHKCPU32 /X)
 If ($CpuInfo -like "*<avx2>1</avx2>*") {
@@ -88,6 +93,7 @@ If ($Binaries.Length -gt 0) {
         [PSCustomObject]@{
             Type = "CPU"
             Path = $Path + $Binaries[$Binary]
+            HashSHA256 = $HashSHA256[$Binaries[$Binary]]
             Arguments = "-a $_ -o $($Pools.(Get-Algorithm $_).Protocol)://$($Pools.(Get-Algorithm $_).Host):$($Pools.(Get-Algorithm $_).Port) -u $($Pools.(Get-Algorithm $_).User) -p $($Pools.(Get-Algorithm $_).Pass)$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Ccminer"
