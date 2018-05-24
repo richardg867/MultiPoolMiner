@@ -51,6 +51,9 @@ $Commands = [PSCustomObject]@{
     "ethash2gb;pascal:40"   = @("", "")
     "ethash2gb;pascal:60"   = @("", "")
     "ethash2gb;pascal:80"   = @("", "")
+    "ethash2gb;sia:100"     = @("", "")
+    "ethash2gb;sia:130"     = @("", "")
+    "ethash2gb;sia:160"     = @("", "")
 }
 $CommonCommands = @(" -logsmaxsize 1", "") # To be applied to all algorithms and intensities. Array: first value for main algo, second value for secondary algo
 

@@ -4,8 +4,6 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
 
 ## List of changes (important notes in bold)
 
-* Additional Claymore dual-mining intensity values (5-10-15-20-25-30-35-40-45-50-55-60, range depends on algorithm), takes longer to benchmark but increases profit switching granularity
-  * This change will be revisited since upstream is currently overhauling Claymore support
 * All supported algorithms enabled on:
   * JayDDee's cpuminer
   * TPruvot's cpuminer
