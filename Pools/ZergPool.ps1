@@ -49,10 +49,11 @@ $ZergPool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Se
         "quark" {$Divisor *= 1000}
         "qubit" {$Divisor *= 1000}
         "scrypt" {$Divisor *= 1000}
-        "sha256" {$Divisor *= 1000*1000*1000}
+        "sha256" {$Divisor *= 1000*1000*1000*1000*1000}
         "x11" {$Divisor *= 1000}
         "yescrypt" {$Divisor /= 1000}
     }
+    Write-Log "algo=$ZergPool_Algorithm algonorm=$ZergPool_Algorithm_Norm divisor=$Divisor"
 
     if ((Get-Stat -Name "$($Name)_$($ZergPool_Algorithm_Norm)_Profit") -eq $null) {$Stat = Set-Stat -Name "$($Name)_$($ZergPool_Algorithm_Norm)_Profit" -Value ([Double]$ZergPool_Request.$_.estimate_last24h / $Divisor) -Duration (New-TimeSpan -Days 1)}
     else {$Stat = Set-Stat -Name "$($Name)_$($ZergPool_Algorithm_Norm)_Profit" -Value ([Double]$ZergPool_Request.$_.estimate_current / $Divisor) -Duration $StatSpan -ChangeDetection $true}
