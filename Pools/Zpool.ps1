@@ -42,7 +42,6 @@ $Zpool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Selec
         # values in mBTC/MH/day, per PH for sha256 & GH for scrypt, blake, decred, x11, quark, qubit, sha256t, kS for equihash
         "blake2s"   {$Divisor *= 1000}
         "blakecoin" {$Divisor *= 1000}
-        "decred"    {$Divisor *= 1000}
         "equihash"  {$Divisor /= 1000}
         "keccak"    {$Divisor *= 1000}
         "keccakc"   {$Divisor *= 1000}
@@ -52,6 +51,7 @@ $Zpool_Request | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Selec
         "sha256"    {$Divisor *= 1000000}
         "sha256t"   {$Divisor *= 1000}
         "x11"       {$Divisor *= 1000}
+        "x13"       {$Divisor *= 1000}
     }
 
     if ((Get-Stat -Name "$($Name)_$($Zpool_Algorithm_Norm)_Profit") -eq $null) {$Stat = Set-Stat -Name "$($Name)_$($Zpool_Algorithm_Norm)_Profit" -Value ([Double]$Zpool_Request.$_.estimate_last24h / $Divisor) -Duration (New-TimeSpan -Days 1)}
