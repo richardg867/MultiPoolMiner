@@ -1,15 +1,20 @@
 ﻿using module ..\Include.psm1
 
-$Path = ".\Bin\GatelessGateSharp\GatelessGateSharp.exe"
-$Uri = "https://github.com/zawawawa/GatelessGateSharp/releases/download/v1.2.18-stable/Gateless_Gate_Sharp_1.2.18_stable.7z"
+$Path = "$env:ProgramFiles\Zawawa Software LLC\Gateless Gate Sharp\GatelessGateSharp.exe"
+$Uri = "https://github.com/zawawawa/GatelessGateSharp/releases/download/v1.3.8-alpha/GatelessGateSharpInstaller.exe"
 
 $Commands = [PSCustomObject]@{
-    "CryptoNight" = "" #CryptoNight
-    #"Ethash" = "" #Ethash
-    "Lyra2REv2" = "" #Lyra2RE2
-    #"Lbry" = "" #Lbry
-    "NeoScrypt" = "" #NeoScrypt
-    "Pascal" = "" #Pascal
+    "CryptoNight"       = "" #CryptoNight
+    "CryptoNight-Heavy" = "" #CryptoNight-Heavy
+    "CryptoNight-Light" = "" #CryptoNight-Light
+    "CryptoNightV7"     = "" #CryptoNightV7
+    "Ethash"            = "" #Ethash
+    "Lyra2REv2"         = "" #Lyra2RE2
+    "Lbry"              = "" #Lbry
+    "NeoScrypt"         = "" #NeoScrypt
+    "Pascal"            = "" #Pascal
+    "X16R"              = "" #X16R
+    "X16S"              = "" #X16S
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
@@ -22,7 +27,7 @@ if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]:
         [PSCustomObject]@{
             Type = "AMD", "NVIDIA"
             Path = $Path
-            Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false$($Commands.$_)"
+            Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --use_custom_pools=true --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false --optimization_undervolting_memory=false --optimization_undervolting_core=false --optimization_memory_timings=false --optimization_overclocking_memory=false --optimization_memory_timings_extended=false --optimization_overclocking_core=false$($Commands.$_)"
             HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
             API = "Xgminer"
             Port = 4028

@@ -434,7 +434,7 @@ function Expand-WebRequest {
     Invoke-WebRequest $Uri -OutFile $FileName -UseBasicParsing
 
     if (".msi", ".exe" -contains ([IO.FileInfo](Split-Path $Uri -Leaf)).Extension) {
-        Start-Process $FileName "-qb" -Wait
+        Start-Process $FileName "-s -qb" -Wait
     }
     else {
         $Path_Old = (Join-Path (Split-Path $Path) ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName)
