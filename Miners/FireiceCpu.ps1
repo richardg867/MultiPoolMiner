@@ -1,31 +1,36 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\CryptoNight-FireIce\xmr-stak.exe"
-$HashSHA256 = "BF7EBD6EBECF9AA84FAAF657B80BA7848ED07CD5E1F74AED2E2317B347718FF0"
-$Uri = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.3/xmr-stak-win64.zip"
+$HashSHA256 = "F99E89588DA1A4A924ECB1BD3E7CBFDD8EA3EAD239C2506F2653481ED89433AF"
+$Uri = "https://github.com/fireice-uk/xmr-stak/releases/download/2.4.4/xmr-stak-win64.zip"
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 $Port = 3334
 
 $Commands = [PSCustomObject]@{
-    "cryptonight" = "" #CryptoNight
-    "cryptonight_heavy" = "" # CryptoNight-Heavy
-    "cryptonight_lite" = "" # CryptoNight-Lite
-    "cryptonight_lite_v7" = "" # CryptoNight-Lite V7
-    "cryptonight_v7" = "" #CryptoNightV7
+    "cryptonight"             = "" # CryptoNight
+    "cryptonight_heavy"       = "" # CryptoNight-Heavy
+    "cryptonight_lite"        = "" # CryptoNight-Lite
+    "cryptonight_lite_v7"     = "" # CryptoNight-Lite V7
+    "cryptonight_lite_v7_xor" = "" # CryptoNight-Lite V7 XOR
+    "cryptonight_v7"          = "" # CryptoNightV7
 }
 $Currencies = [PSCustomObject]@{
-    "aeon" = "aeon7"
-    "bbs" = "bbscoin"
-    "croat" = "croat"
-    "edollar" = "edollar"
+    "aeon"        = "aeon7"
+    "bbs"         = "bbscoin"
+    "bittube"     = "ipbc"
+    "croat"       = "croat"
+    "edollar"     = "edollar"
     "electroneum" = "electroneum"
-    "graft" = "graft"
-    "haven" = "haven"
-    "intense" = "intense"
-    "karbo" = "karbo"
-    "monero" = "monero7"
-    "sumokoin" = "sumokoin"
+    "graft"       = "graft"
+    "haven"       = "haven"
+    "intense"     = "intense"
+    "ipbc"        = "ipbc"
+    "karbo"       = "karbo"
+    "masari"      = "masari"
+    "monero"      = "monero7"
+    "sumokoin"    = "sumokoin"
+    "turtle"      = "turtlecoin"
 }
 
 $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.$(Get-Algorithm $_)} | ForEach-Object {
@@ -69,13 +74,13 @@ $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty 
     ) -replace "^{" -replace "}$" | Set-Content "$(Split-Path $Path)\$($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Cpu.txt" -Force -ErrorAction SilentlyContinue
 
     [PSCustomObject]@{
-        Type      = "CPU"
-        Path      = $Path
+        Type       = "CPU"
+        Path       = $Path
         HashSHA256 = $HashSHA256
-        Arguments = "-C $($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Cpu.txt --noUAC --noAMD --noNVIDIA -i $($Port)"
-        HashRates = [PSCustomObject]@{$Algorithm_Norm = $Stats."$($Name)_$($Algorithm_Norm)_HashRate".Week}
-        API       = "XMRig"
-        Port      = $Port
-        URI       = $Uri
+        Arguments  = "-C $($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Cpu.txt --noUAC --noAMD --noNVIDIA -i $($Port)"
+        HashRates  = [PSCustomObject]@{$Algorithm_Norm = $Stats."$($Name)_$($Algorithm_Norm)_HashRate".Week}
+        API        = "XMRig"
+        Port       = $Port
+        URI        = $Uri
     }
 }

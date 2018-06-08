@@ -13,8 +13,9 @@ $Uri = "https://github.com/MultiPoolMiner/miner-binaries/releases/download/claym
 $ManualURI = "https://bitcointalk.org/index.php?topic=638915.0"
 $Port = 13333
 $Commands = [PSCustomObject]@{
-    "cryptonightV7"   = " -pow7 1" #CryptoNightV7
-    "cryptonightLite" = " -lite 1" #CryptoNightLite
+    "CryptoNight"     = "" #CryptoNight
+    "CryptoNightV7"   = " -pow7 1" #CryptoNightV7
+    "CryptoNightLite" = " -lite 1" #CryptoNightLite
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName

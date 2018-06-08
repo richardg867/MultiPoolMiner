@@ -8,24 +8,29 @@ $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty Ba
 $Port = 3335
 
 $Commands = [PSCustomObject]@{
-    "cryptonight" = "" #CryptoNight
-    "cryptonight_heavy" = "" # CryptoNight-Heavy
-    "cryptonight_lite" = "" # CryptoNight-Lite
-    "cryptonight_lite_v7" = "" # CryptoNight-Lite V7
-    "cryptonight_v7" = "" #CryptoNightV7
+    "cryptonight"             = "" # CryptoNight
+    "cryptonight_heavy"       = "" # CryptoNight-Heavy
+    "cryptonight_lite"        = "" # CryptoNight-Lite
+    "cryptonight_lite_v7"     = "" # CryptoNight-Lite V7
+    "cryptonight_lite_v7_xor" = "" # CryptoNight-Lite V7 XOR
+    "cryptonight_v7"          = "" # CryptoNightV7
 }
 $Currencies = [PSCustomObject]@{
-    "aeon" = "aeon7"
-    "bbs" = "bbscoin"
-    "croat" = "croat"
-    "edollar" = "edollar"
+    "aeon"        = "aeon7"
+    "bbs"         = "bbscoin"
+    "bittube"     = "ipbc"
+    "croat"       = "croat"
+    "edollar"     = "edollar"
     "electroneum" = "electroneum"
-    "graft" = "graft"
-    "haven" = "haven"
-    "intense" = "intense"
-    "karbo" = "karbo"
-    "monero" = "monero7"
-    "sumokoin" = "sumokoin"
+    "graft"       = "graft"
+    "haven"       = "haven"
+    "intense"     = "intense"
+    "ipbc"        = "ipbc"
+    "karbo"       = "karbo"
+    "masari"      = "masari"
+    "monero"      = "monero7"
+    "sumokoin"    = "sumokoin"
+    "turtle"      = "turtlecoin"
 }
 
 $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.$(Get-Algorithm $_)} | ForEach-Object {
@@ -69,13 +74,13 @@ $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty 
     ) -replace "^{" -replace "}$" | Set-Content "$(Split-Path $Path)\$($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Nvidia.txt" -Force -ErrorAction SilentlyContinue
 
     [PSCustomObject]@{
-        Type      = "NVIDIA"
-        Path      = $Path
+        Type       = "NVIDIA"
+        Path       = $Path
         HashSHA256 = $HashSHA256
-        Arguments = "-C $($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Nvidia.txt --noUAC --noAMD --noCPU -i $($Port)"
-        HashRates = [PSCustomObject]@{$Algorithm_Norm = $Stats."$($Name)_$($Algorithm_Norm)_HashRate".Week}
-        API       = "XMRig"
-        Port      = $Port
-        URI       = $Uri
+        Arguments  = "-C $($Pools.$Algorithm_Norm.Name)_$($Algorithm_Norm)_$($Pools.$Algorithm_Norm.User)_Nvidia.txt --noUAC --noAMD --noCPU -i $($Port)"
+        HashRates  = [PSCustomObject]@{$Algorithm_Norm = $Stats."$($Name)_$($Algorithm_Norm)_HashRate".Week}
+        API        = "XMRig"
+        Port       = $Port
+        URI        = $Uri
     }
 }
