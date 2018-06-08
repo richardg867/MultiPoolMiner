@@ -7,20 +7,18 @@ $Uri = "https://github.com/nemosminer/ccminer-xevan/releases/download/Alexis78xe
 $Commands = [PSCustomObject]@{
     "blake2s"   = "" #Blake2s
     "blakecoin" = "" #Blakecoin
+    "decred"    = "" #Decred
     "keccak"    = "" #Keccak
+    "lbry"      = "" #Lbry
     "lyra2v2"   = "" #Lyra2RE2
+    "myr-gr"    = "" #MyriadGroestl
+    "nist5"     = "" #Nist5
+    "quark"     = "" #Quark
+    "qubit"     = "" #Qubit
     "skein"     = "" #Skein
+    "x12"       = "" #X12
+    "x14"       = "" #X14
     "xevan"     = "" #Xevan
-    
-    # ASIC - never profitable 12/05/2018
-    "decred"   = "" #Decred
-    "lbry"     = "" #Lbry
-    "myr-gr"   = "" #MyriadGroestl
-    "nist5"    = "" #Nist5
-    "qubit"    = "" #Qubit
-    "quark"    = "" #Quark
-    "x12"      = "" #X12
-    "x14"      = "" #X14
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName

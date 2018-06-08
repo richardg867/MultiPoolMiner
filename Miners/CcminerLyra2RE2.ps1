@@ -8,20 +8,18 @@ $Commands = [PSCustomObject]@{
     "blake2s"   =  "" #Blake2s - Beaten by ccminerSib by 150%
     "blakecoin" = "" #Blakecoin
     "c11"       = "" #C11
+    "decred"    = "" #Decred
     "groestl"   = "" #Groestl
     "keccak"    = "" #Keccak
     "lyra2v2"   = "" #Lyra2RE2
+    "myr-gr"    = "" #MyriadGroestl
     "neoscrypt" = "" #NeoScrypt
+    "nist5"     = "" #Nist5
+    "quark"     = "" #Quark
+    "qubit"     = "" #qubit
+    "sib"       = "" #Sib
     "skein"     = "" #Skein
     "x17"       = "" #X17
-    
-    # ASIC - never profitable 12/05/2018
-    "decred"   = "" #Decred
-    "myr-gr"   = "" #MyriadGroestl
-    "nist5"    = "" #Nist5
-    "qubit"    = "" #qubit
-    "quark"    = "" #Quark
-    "sib"      = "" #Sib
 
 }
 

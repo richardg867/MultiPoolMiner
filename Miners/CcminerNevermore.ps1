@@ -28,8 +28,6 @@ $Commands = [PSCustomObject]@{
     "x12"         = "" #X12 - NOT TESTED
     "x16r"        = "" #Raven
     "x17"         = "" #X17
-   
-    # ASIC - never profitable 15/05/2018
     "blake"      = "" #blake
     "blakecoin"  = "" #Blakecoin
     "blake2s"    = "" #Blake2s
