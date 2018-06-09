@@ -52,7 +52,6 @@ $Commands = [PSCustomObject]@{
     "timetravel"  = "" # Machinecoin permuted x8
     "tribus"      = "" # Denarius, untested
     "vanilla"     = "" # Blake256-8 (VNL), untested
-    "vanilla"     = "" #BlakeVanilla
     "veltor"      = "" # Thorsriddle streebog, untested
     "whirlcoin"   = "" # Old Whirlcoin (Whirlpool algo), untested
     "whirlpool"   = "" # Whirlpool algo, untested
