@@ -106,7 +106,7 @@ $Rates = [PSCustomObject]@{BTC = [Double]1}
 #Start the log
 Start-Transcript ".\Logs\MultiPoolMiner_$(Get-Date -Format "yyyy-MM-dd_HH-mm-ss").txt"
 
-Write-Log "Starting MultiPoolMiner® v$Version © 2017-2018 MultiPoolMiner.io"
+Write-Log "Starting MultiPoolMiner® v$Version © 2017-2018 MultiPoolMiner.io [richardg867 fork]"
 
 #Set process priority to BelowNormal to avoid hash rate drops on systems with weak CPUs
 (Get-Process -Id $PID).PriorityClass = "BelowNormal"

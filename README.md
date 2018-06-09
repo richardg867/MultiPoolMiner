@@ -7,13 +7,14 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
 * All supported algorithms enabled on:
   * JayDDee's cpuminer
   * TPruvot's cpuminer
-  * TPruvot's ccminer and forks
+  * ccminer forks not targeted at a specific algorithm
   * CryptoNight miners (all CryptoNight variants enabled where supported)
 * Optimization detection for both cpuminers, for faster benchmarking when CPU mining
   * SHA support for Ryzen CPUs on JayDDee's cpuminer is enabled as well
 * New miners:
-  * [Excavator 1.2.11](https://github.com/nicehash/excavator/releases/tag/v1.2.11a): the last version to support AMD cards
-    * **If you have AMD cards, download Excavator 1.2.11** from the link above and place it in Bin/Excavator-AMD
+  * [Excavator 1.2.11](https://github.com/nicehash/excavator/releases/tag/v1.2.11a): final version of Excavator with AMD support
   * [Gateless Gate Sharp](https://github.com/zawawawa/GatelessGateSharp)
-    * Preliminary support for some algorithms. Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)
+    * Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)
+    * Installs to `Program Files` instead of the `Bin` directory
+    * Automatic optimizations are disabled to avoid issues with other miners
 * Other minor tweaks...
