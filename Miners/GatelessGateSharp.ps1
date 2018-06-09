@@ -21,6 +21,13 @@ $Commands = [PSCustomObject]@{
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
 
+if ($Config.IgnoreMinerFee -or $Config.Miners.$Name.IgnoreMinerFee) {
+    $Fees = @($null)
+}
+else {
+    $Fees = @($MinerFeeInPercent)
+}
+
 if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         $Algorithm = $_
@@ -30,14 +37,15 @@ if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]:
         if ($Fees) {$HashRate = $HashRate * (1 - $MinerFeeInPercent / 100)}
 
         [PSCustomObject]@{
-            Type = "AMD", "NVIDIA"
-            Path = $Path
+            Type       = "AMD", "NVIDIA"
+            Path       = $Path
             HashSHA256 = $HashSHA256
-            Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --use_custom_pools=true --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false --optimization_undervolting_memory=false --optimization_undervolting_core=false --optimization_memory_timings=false --optimization_overclocking_memory=false --optimization_memory_timings_extended=false --optimization_overclocking_core=false$($Commands.$_)"
-            HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $HashRate}
-            API = "Xgminer"
-            Port = 4028
-            URI = $Uri
+            Arguments  = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --use_custom_pools=true --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false --optimization_undervolting_memory=false --optimization_undervolting_core=false --optimization_memory_timings=false --optimization_overclocking_memory=false --optimization_memory_timings_extended=false --optimization_overclocking_core=false$($Commands.$_)"
+            HashRates  = [PSCustomObject]@{(Get-Algorithm $_) = $HashRate}
+            API        = "Xgminer"
+            Port       = 4028
+            URI        = $Uri
+            Fees       = $Fees
         }
 
         # Pascal dual mining disabled until confirmation that the sgminer-compatible API returns both hashrates
