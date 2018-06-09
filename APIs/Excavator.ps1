@@ -28,26 +28,28 @@ class Excavator : Miner {
 
         if ($this.Workers) {
             if ([Excavator]::Service.Id -eq $this.Service_Id) {
-                $Request = @{id = 1; method = "workers.free"; params = $this.Workers} | ConvertTo-Json -Compress
+                $this.Workers | ForEach-Object {
+                    $Request = @{id = 1; method = "worker.free"; params = @("$_")} | ConvertTo-Json -Compress
 
-                try {
-                    $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
-                    $Data = $Response | ConvertFrom-Json -ErrorAction Stop
+                    try {
+                        $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
+                        $Data = $Response | ConvertFrom-Json -ErrorAction Stop
 
-                    if ($Data.id -ne 1) {
-                        Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
-                        $this.SetStatus("Failed")
+                        if ($Data.id -ne 1) {
+                            Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
+                            $this.SetStatus("Failed")
+                        }
+
+                        if ($Data.error) {
+                            Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                            $this.SetStatus("Failed")
+                        }
                     }
-
-                    if ($Data.error) {
-                        Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                    catch {
+                        Write-Log -Level Error  "Failed to connect to miner ($($this.Name)). "
                         $this.SetStatus("Failed")
+                        return
                     }
-                }
-                catch {
-                    Write-Log -Level Error  "Failed to connect to miner ($($this.Name)). "
-                    $this.SetStatus("Failed")
-                    return
                 }
             }
         }
@@ -223,26 +225,28 @@ class Excavator : Miner {
 
         if ($this.Workers) {
             if ([Excavator]::Service.Id -eq $this.Service_Id) {
-                $Request = @{id = 1; method = "workers.free"; params = $this.Workers} | ConvertTo-Json -Compress
+                $this.Workers | ForEach-Object {
+                    $Request = @{id = 1; method = "worker.free"; params = @("$_")} | ConvertTo-Json -Compress
 
-                try {
-                    $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
-                    $Data = $Response | ConvertFrom-Json -ErrorAction Stop
+                    try {
+                        $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
+                        $Data = $Response | ConvertFrom-Json -ErrorAction Stop
 
-                    if ($Data.id -ne 1) {
-                        Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
-                        $this.SetStatus("Failed")
+                        if ($Data.id -ne 1) {
+                            Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
+                            $this.SetStatus("Failed")
+                        }
+
+                        if ($Data.error) {
+                            Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                            $this.SetStatus("Failed")
+                        }
                     }
-
-                    if ($Data.error) {
-                        Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                    catch {
+                        Write-Log -Level Error  "Failed to connect to miner ($($this.Name)). "
                         $this.SetStatus("Failed")
+                        return
                     }
-                }
-                catch {
-                    Write-Log -Level Error  "Failed to connect to miner ($($this.Name)). "
-                    $this.SetStatus("Failed")
-                    return
                 }
             }
         }
