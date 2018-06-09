@@ -1,8 +1,8 @@
 ﻿using module ..\Include.psm1
 
 $Path = ".\Bin\AMD-Avermore\sgminer.exe"
-$HashSHA256 = "7662486F3B07C2B72F114E25757449967D2219C3F59CAF9384EDF6912251D969"
-$Uri = "https://github.com/brian112358/avermore-miner/releases/download/v1.4/avermore-v1.4-windows.zip"
+$HashSHA256 = "3BB5081AB3D1DDECA6BCB63914F3D1C5C39387FB423D1234F4CB9E05ED79B149"
+$Uri = "https://github.com/brian112358/avermore-miner/releases/download/v1.4.1/avermore-v1.4.1-windows.zip"
 
 $Commands = [PSCustomObject]@{
     "blake256r8"  = " --gpu-threads 2 --intensity d" #Blake256r8

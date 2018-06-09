@@ -12,6 +12,7 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
 * Optimization detection for both cpuminers, for faster benchmarking when CPU mining
   * SHA support for Ryzen CPUs on JayDDee's cpuminer is enabled as well
 * New miners:
+  * [Avermore](https://github.com/brian112358/avermore-miner)
   * [Excavator 1.2.11](https://github.com/nicehash/excavator/releases/tag/v1.2.11a): final version of Excavator with AMD support
   * [Gateless Gate Sharp](https://github.com/zawawawa/GatelessGateSharp)
     * Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)
