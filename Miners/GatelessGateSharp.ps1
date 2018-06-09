@@ -3,6 +3,7 @@
 $Path = "$env:ProgramFiles\Zawawa Software LLC\Gateless Gate Sharp\GatelessGateSharp.exe"
 $HashSHA256 = "D54D6CADF9FD8EEE238BD1C9FCB8F6E821ACAA41F49C0F9EFB96DBB33D68FECC"
 $Uri = "https://github.com/zawawawa/GatelessGateSharp/releases/download/v1.3.8-alpha/GatelessGateSharpInstaller.exe"
+$MinerFeeInPercent = 1
 
 $Commands = [PSCustomObject]@{
     "CryptoNight"       = "" #CryptoNight
@@ -23,14 +24,17 @@ $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty Ba
 if (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.(Get-Algorithm $_).Protocol -eq "stratum+tcp" <#temp fix#>} | ForEach-Object {
         $Algorithm = $_
-        if ($Algorithm -eq "Ethash") {$Algorithm = "$Algorithm (NiceHash)"}
+        $Algorithm_Norm = Get-Algorithm $_
+        
+        $HashRate = $Stats."$($Name)_$($Algorithm_Norm)_HashRate".Week
+        if ($Fees) {$HashRate = $HashRate * (1 - $MinerFeeInPercent / 100)}
 
         [PSCustomObject]@{
             Type = "AMD", "NVIDIA"
             Path = $Path
             HashSHA256 = $HashSHA256
             Arguments = "--auto_start=true --launch_at_startup=false --api_enabled=true --api_port=4028 --use_custom_pools=true --custom_pool0_enabled=true --custom_pool0_algorithm=`"$Algorithm`" --custom_pool0_host=$($Pools.(Get-Algorithm $_).Host) --custom_pool0_port=$($Pools.(Get-Algorithm $_).Port) --custom_pool0_login=$($Pools.(Get-Algorithm $_).User) --custom_pool0_password=$($Pools.(Get-Algorithm $_).Pass) --custom_pool0_secondary_algorithm=`"`" --custom_pool0_secondary_host=`"`" --custom_pool1_enabled=false --custom_pool2_enabled=false --custom_pool3_enabled=false --optimization_undervolting_memory=false --optimization_undervolting_core=false --optimization_memory_timings=false --optimization_overclocking_memory=false --optimization_memory_timings_extended=false --optimization_overclocking_core=false$($Commands.$_)"
-            HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $Stats."$($Name)_$(Get-Algorithm $_)_HashRate".Week}
+            HashRates = [PSCustomObject]@{(Get-Algorithm $_) = $HashRate}
             API = "Xgminer"
             Port = 4028
             URI = $Uri
