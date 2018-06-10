@@ -17,5 +17,5 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
   * [Gateless Gate Sharp](https://github.com/zawawawa/GatelessGateSharp)
     * Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)
     * Installs to `Program Files` instead of the `Bin` directory
-    * Automatic optimizations are disabled to avoid issues with other miners
+    * Overclocking and timing tweaks are disabled to avoid issues with other miners
 * Other minor tweaks...
