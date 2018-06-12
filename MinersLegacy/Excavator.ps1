@@ -13,30 +13,28 @@ $Uri = "https://github.com/nicehash/excavator/releases/download/v1.4.4a/excavato
 $Port = "5100"
 
 $Commands = [PSCustomObject[]]@(
+    [PSCustomObject]@{Algorithm = "decred"; Threads = 1; Params = @()} #Decred
     [PSCustomObject]@{Algorithm = "daggerhashimoto"; Threads = 1; Params = @()} #Ethash
     [PSCustomObject]@{Algorithm = "equihash"; Threads = 1; Params = @()} #Equihash
     [PSCustomObject]@{Algorithm = "lbry"; Threads = 1; Params = @()} #Lbry
     [PSCustomObject]@{Algorithm = "lyra2rev2"; Threads = 1; Params = @()} #Lyra2RE2
     [PSCustomObject]@{Algorithm = "neoscrypt"; Threads = 1; Params = @()} #NeoScrypt
+    [PSCustomObject]@{Algorithm = "pascal"; Threads = 1; Params = @()} #Pascal
+    [PSCustomObject]@{Algorithm = "sia"; Threads = 1; Params = @()} #Siacoin
+    [PSCustomObject]@{Algorithm = "decred"; Threads = 2; Params = @()} #Decred
     [PSCustomObject]@{Algorithm = "daggerhashimoto"; Threads = 2; Params = @()} #Ethash
     [PSCustomObject]@{Algorithm = "equihash"; Threads = 2; Params = @()} #Equihash
     [PSCustomObject]@{Algorithm = "lbry"; Threads = 2; Params = @()} #Lbry
     [PSCustomObject]@{Algorithm = "lyra2rev2"; Threads = 2; Params = @()} #Lyra2RE2
     [PSCustomObject]@{Algorithm = "neoscrypt"; Threads = 2; Params = @()} #NeoScrypt
+    [PSCustomObject]@{Algorithm = "pascal"; Threads = 2; Params = @()} #Pascal
+    [PSCustomObject]@{Algorithm = "sia"; Threads = 2; Params = @()} #Siacoin
     [PSCustomObject]@{Algorithm = "daggerhashimoto_decred"; Threads = 1; Params = @()} #Dual mining 1 thread
     [PSCustomObject]@{Algorithm = "daggerhashimoto_pascal"; Threads = 1; Params = @()} #Dual mining 1 thread
     [PSCustomObject]@{Algorithm = "daggerhashimoto_sia"; Threads = 1; Params = @()} #Dual mining 1 thread
     [PSCustomObject]@{Algorithm = "daggerhashimoto_decred"; Threads = 2; Params = @()} #Dual mining 2 threads
     [PSCustomObject]@{Algorithm = "daggerhashimoto_pascal"; Threads = 2; Params = @()} #Dual mining 2 threads
     [PSCustomObject]@{Algorithm = "daggerhashimoto_sia"; Threads = 2; Params = @()} #Dual mining 2 threads
-
-    #ASIC mining only 2018/06/11
-    #[PSCustomObject]@{Algorithm = "decred"; Threads = 1; Params = @()} #Pascal
-    #[PSCustomObject]@{Algorithm = "decred"; Threads = 2; Params = @()} #Pascal
-    #[PSCustomObject]@{Algorithm = "pascal"; Threads = 1; Params = @()} #Pascal
-    #[PSCustomObject]@{Algorithm = "pascal"; Threads = 2; Params = @()} #Pascal
-    #[PSCustomObject]@{Algorithm = "sia"; Threads = 1; Params = @()} #Pascal
-    #[PSCustomObject]@{Algorithm = "sia"; Threads = 2; Params = @()} #Pascal
 )
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
