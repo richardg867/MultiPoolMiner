@@ -5,14 +5,13 @@ $HashSHA256 = "A24024BEA8789B62D61CB3F41432EA1A62EE5AD97CD3DEAB1E2308F40B127A4D"
 $Uri = "https://github.com/KL0nLutiy/sgminer-kl/releases/download/kl-1.0.5fix/sgminer-kl-1.0.5_fix-windows_x64.zip"
 
 $Commands = [PSCustomObject]@{
-    "Aergo" = " -X 256 -g 2" #aergo
-	"Phi" = "  -X 256 -g 2 -w 256" #phi
-	"Tribus" = "  -X 256 -g 2" #tribus
-	"x16r" = "  -X 256 -g 2" #x16r
-	"x16s" = "  -X 256 -g 2" #x16s
-	"X17" = "  -X 256 -g 2" #x17
-	"Xevan" = "  -X 256 -g 2" #xevan
-
+    "aergo"  = " -X 256 -g 2" #aergo
+    "phi"    = " -X 256 -g 2 -w 256" #phi
+    "tribus" = " -X 256 -g 2" #tribus
+    "x16r"   = " -X 256 -g 2" #x16r
+    "x16s"   = " -X 256 -g 2" #x16s
+    "x17"    = " -X 256 -g 2" #x17
+    "xevan"  = " -X 256 -g 2" #xevan
 }
 
 $Name = Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName
