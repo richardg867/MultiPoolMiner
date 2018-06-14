@@ -27,7 +27,7 @@ if (($NiceHash_Request.result.simplemultialgo | Measure-Object).Count -le 1) {
 
 $NiceHash_Regions = "eu", "usa", "hk", "jp", "in", "br"
 
-$NiceHash_Request.result.simplemultialgo | ForEach-Object {
+$NiceHash_Request.result.simplemultialgo | Where-Object {$_.paying -gt 0} <# algos paying 0 fail stratum #> | ForEach-Object {
     $NiceHash_Host = "nicehash.com"
     $NiceHash_Port = $_.port
     $NiceHash_Algorithm = $_.name
@@ -39,7 +39,6 @@ $NiceHash_Request.result.simplemultialgo | ForEach-Object {
 
     $Divisor = 1000000000
 
-    if ([Double]$_.paying -eq 0) {return}
     $Stat = Set-Stat -Name "$($Name)_$($NiceHash_Algorithm_Norm)_Profit" -Value ([Double]$_.paying / $Divisor) -Duration $StatSpan -ChangeDetection $true
 
     $NiceHash_Regions | ForEach-Object {
