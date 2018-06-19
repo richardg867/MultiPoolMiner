@@ -34,8 +34,8 @@ $NiceHash_Request.result.simplemultialgo | Where-Object {$_.paying -gt 0} <# alg
     $NiceHash_Algorithm_Norm = Get-Algorithm $NiceHash_Algorithm
     $NiceHash_Coin = ""
 
-    if ($NiceHash_Algorithm_Norm -eq "Sia") {$NiceHash_Algorithm_Norm = "SiaNiceHash"} #temp fix
-    if ($NiceHash_Algorithm_Norm -eq "Decred") {$NiceHash_Algorithm_Norm = "DecredNiceHash"} #temp fix
+    #if ($NiceHash_Algorithm_Norm -eq "Sia") {$NiceHash_Algorithm_Norm = "SiaNiceHash"} #temp fix
+    #if ($NiceHash_Algorithm_Norm -eq "Decred") {$NiceHash_Algorithm_Norm = "DecredNiceHash"} #temp fix
 
     $Divisor = 1000000000
 
