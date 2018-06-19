@@ -9,6 +9,7 @@ $Port = 3334
 
 $Commands = [PSCustomObject]@{
     "cryptonight"             = "" # CryptoNight
+    "cryptonight_haven"       = "" # CryptoNight-Haven
     "cryptonight_heavy"       = "" # CryptoNight-Heavy
     "cryptonight_lite"        = "" # CryptoNight-Lite
     "cryptonight_lite_v7"     = "" # CryptoNight-Lite V7
