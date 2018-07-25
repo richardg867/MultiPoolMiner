@@ -211,6 +211,55 @@ class Excavator : Miner {
                 }
             }
         }
+
+        $Request = @{id = 1; method = "message"; params = @("Worker [$($this.Workers -join "&")] for miner $($this.Name) started. ")} | ConvertTo-Json -Compress
+
+        try {
+            $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
+            $Data = $Response | ConvertFrom-Json -ErrorAction Stop
+
+            if ($Data.id -ne 1) {
+                Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
+                $this.SetStatus("Failed")
+            }
+
+            if ($Data.error) {
+                Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                $this.SetStatus("Failed")
+            }
+        }
+        catch {
+            if ($this.GetActiveTime().TotalSeconds -gt 60 -or -not (Get-Process -Name ($this.GetProcessNames()))) {
+                Write-Log -Level Error "Failed to connect to miner ($($this.Name)). "
+                $this.SetStatus("Failed")
+            }
+            return
+        }   
+
+        if (($this.Data).count -eq 0) {
+            #Resets logged speed of worker to 0 for more accurate hashrate reporting
+            $Request = @{id = 1; method = "worker.reset"; params = @($this.Workers)} | ConvertTo-Json -Compress
+
+            try {
+                $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
+                $Data = $Response | ConvertFrom-Json -ErrorAction Stop
+
+                if ($Data.id -ne 1) {
+                    Write-Log -Level Error  "Invalid response returned by miner ($($this.Name)). "
+                }
+
+                if ($Data.error) {
+                    Write-Log -Level Error  "Error returned by miner ($($this.Name)): $($Data.error)"
+                }
+            }
+            catch {
+                if ($this.GetActiveTime().TotalSeconds -gt 60 -or -not (Get-Process -Name ($this.GetProcessNames()))) {
+                    Write-Log -Level Error "Failed to connect to miner ($($this.Name)). "
+                    $this.SetStatus("Failed")
+                }
+                return
+            }   
+        }
     }
 
     hidden StopMining() {
@@ -300,7 +349,20 @@ class Excavator : Miner {
         if (-not [Excavator]::Service) {
             $LogFile = $Global:ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath(".\Logs\Excavator-$($this.Port)_$(Get-Date -Format "yyyy-MM-dd_HH-mm-ss").txt")
             [Excavator]::Service = Start-Job ([ScriptBlock]::Create("Start-Process $(@{desktop = "powershell"; core = "pwsh"}.$Global:PSEdition) `"-command ```$Process = (Start-Process '$($this.Path)' '-p $($this.Port) -f 0 -fn \```"$($LogFile)\```"' -WorkingDirectory '$(Split-Path $this.Path)' -WindowStyle Minimized -PassThru).Id; Wait-Process -Id `$PID; Stop-Process -Id ```$Process`" -WindowStyle Hidden -Wait"))
-            Start-Sleep 10
+            #Wait until excavator is ready, max 10 seconds
+            $Server = "localhost"
+            $Timeout = 1
+            $Request = @{id = 1; method = "algorithm.list"; params = @()} | ConvertTo-Json -Compress
+            $Response = ""
+            for($waitforlocalhost=0; $waitforlocalhost -le 10; $waitforlocalhost++) {
+                try {
+                    $Response = Invoke-TcpRequest $Server $this.Port $Request $Timeout -ErrorAction Stop
+                    $Data = $Response | ConvertFrom-Json -ErrorAction Stop
+                    break
+                }
+                catch {
+                }
+            }
         }
 
         if ($this.Service_Id -ne [Excavator]::Service.Id) {
@@ -395,10 +457,10 @@ class Excavator : Miner {
         }
 
         $this.Data += [PSCustomObject]@{
-            Date = (Get-Date).ToUniversalTime()
-            Raw = $Response
+            Date     = (Get-Date).ToUniversalTime()
+            Raw      = $Response
             HashRate = $HashRate
-            Device = @()
+            Device   = @()
         }
 
         return @($Request, $Data | ConvertTo-Json -Compress)

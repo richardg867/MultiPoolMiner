@@ -8,8 +8,8 @@ param(
 )
 
 $Path = ".\Bin\AMD_NVIDIA-Claymore-Ethash\EthDcrMiner64.exe"
-$HashSHA256 = "41FDBE471F168CB82A2931DCB009CA236DC8280C808F29F415DDE3A86939D4B4"
-$Uri = "https://github.com/MultiPoolMiner/miner-binaries/releases/download/ethdcrminer64/ClaymoreDual_v11.8.zip"
+$HashSHA256 = "4A9AC40A4E8C2F59683294726616A1BE7DE6A78B4929AC490D6844C2CB69E347"
+$Uri = "https://github.com/MultiPoolMiner/miner-binaries/releases/download/ethdcrminer64/ClaymoreDual_v11.9.zip"
 $ManualUri = "https://bitcointalk.org/index.php?topic=1433925.0"
 $Port = "50{0:d2}"
 
@@ -379,6 +379,7 @@ $Commands = [PSCustomObject[]]@(
     [PSCustomObject]@{MainAlgorithm = "ethash"; MinMemGB = 4; SecondaryAlgorithm = "sia"; SecondaryIntensity = 100; Params = ""} #Ethash/Siacoin
 )
 
+$CommonCommands = " -dbg 1 -logfile debug.log"
 $Name = "$(Get-Item $MyInvocation.MyCommand.Path | Select-Object -ExpandProperty BaseName)"
 $Devices = @($Devices | Where-Object Type -EQ "GPU")
 
@@ -397,7 +398,7 @@ $Devices | Select-Object Vendor, Model -Unique | ForEach-Object {
         $Main_Algorithm_Norm = Get-Algorithm $Main_Algorithm
         $MinMemGB = $_.MinMemGB
 
-        $Miner_Device = @($Device | Where-Object {$_.OpenCL.GlobalMemsize -ge $MinMemGB})
+        $Miner_Device = @($Device | Where-Object {$_.OpenCL.GlobalMemsize -ge $MinMemGB * 1000000000})
 
         if ($Arguments_Platform -and $Miner_Device) {
             if ($_.SecondaryAlgorithm) {
