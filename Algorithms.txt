@@ -35,6 +35,7 @@
     "cryptolight":  "CryptoNightLite",
     "cryptolightv7":  "CryptoNightLiteV7",
     "cryptonight":  "CryptoNight",
+    "cryptonightfast":  "CryptoNightFast",
     "cryptonightheavy":  "CryptoNightHeavy",
     "cryptonightheavyxhv":  "CryptoNightHeavyXHV",
     "cryptonightipbc":  "CryptoNightLiteIPBC",
