@@ -9,6 +9,7 @@ $Port = 3336
 
 $Commands = [PSCustomObject]@{
     "cryptonight"             = "" # CryptoNight
+    "cryptonight_bittube2"    = "" # CryptoNight-BitTube2
     "cryptonight_haven"       = "" # CryptoNight-Haven
     "cryptonight_heavy"       = "" # CryptoNight-Heavy
     "cryptonight_lite"        = "" # CryptoNight-Lite
@@ -17,21 +18,16 @@ $Commands = [PSCustomObject]@{
     "cryptonight_v7"          = "" # CryptoNightV7
 }
 $Currencies = [PSCustomObject]@{
-    "aeon"        = "aeon7"
-    "bbs"         = "bbscoin"
-    "bittube"     = "ipbc"
-    "croat"       = "croat"
-    "edollar"     = "edollar"
-    "electroneum" = "electroneum"
-    "graft"       = "graft"
-    "haven"       = "haven"
-    "intense"     = "intense"
-    "ipbc"        = "ipbc"
-    "karbo"       = "karbo"
-    "masari"      = "masari"
-    "monero"      = "monero7"
-    "sumokoin"    = "sumokoin"
-    "turtle"      = "turtlecoin"
+    "aeon"    = "aeon7"
+    "bbs"     = "bbscoin"
+    "bittube" = "bittube"
+    "graft"   = "graft"
+    "haven"   = "haven"
+    "intense" = "intense"
+    "masari"  = "masari"
+    "monero"  = "monero7"
+    "ryo"     = "ryo"
+    "turtle"  = "turtlecoin"
 }
 
 $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty Name | Where-Object {$Pools.$(Get-Algorithm $_)} | ForEach-Object {
@@ -51,7 +47,7 @@ $Commands | Get-Member -MemberType NoteProperty | Select-Object -ExpandProperty 
                     use_tls         = $Pools.$Algorithm_Norm.SSL
                     tls_fingerprint = ""
                     pool_weight     = 1
-                    rig_id = ""
+                    rig_id          = ""
                 }
             )
             currency        = if ($Currency) {"$Currency"} else {"$_"}
