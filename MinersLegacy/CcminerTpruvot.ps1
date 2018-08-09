@@ -1,8 +1,8 @@
 using module ..\Include.psm1
 
-$Path = ".\Bin\NVIDIA-TPruvot\ccminer-x64.exe"
-$HashSHA256 = "9DFE2C651CFFB399D8C9603A840C90707BD1E1D70CE6FB35DDC3BD3BD47A719C"
-$Uri = "https://github.com/tpruvot/ccminer/releases/download/2.2.6-tpruvot/ccminer-x64-2.2.6-phi2-cuda9.7z"
+$Path = ".\Bin\NVIDIA-CcminerTPruvot\ccminer-x64.exe"
+$HashSHA256 = "8051774049A412DBA64D9A699337797E7077AE45D564ECC7DEA36C0270E91F6A"
+$Uri = "https://github.com/tpruvot/ccminer/releases/download/2.3-tpruvot/ccminer-2.3-cuda9.7z"
 
 $Commands = [PSCustomObject]@{
     "allium"        = "" #Garlic
