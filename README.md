@@ -14,6 +14,7 @@ This is my personal MultiPoolMiner code playground. Many of this fork's changes 
 * New miners:
   * [Avermore](https://github.com/brian112358/avermore-miner)
   * [Excavator 1.2.11](https://github.com/nicehash/excavator/releases/tag/v1.2.11a): final version of Excavator with AMD support
+    * Not perfect due to slight API differences on the old version
   * [Gateless Gate Sharp](https://github.com/zawawawa/GatelessGateSharp)
     * **Only enabled if MultiPoolMiner is running as administrator (or UAC is disabled)**
     * Installs to `Program Files` instead of the `Bin` directory
