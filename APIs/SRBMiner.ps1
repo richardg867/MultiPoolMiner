@@ -12,7 +12,7 @@ class SRBMiner : Miner {
 
         #Write config files. Keep separate files and do not overwrite to preserve optional manual customization
         $ConfigFile = "Config_$($this.Name)-$($this.Algorithm)-$($this.Port).txt" #Use unqualified file name in case MPM path contains spaces
-        $Parameters.Config | ConvertTo-Json -Depth 10 | Set-Content "$(Split-Path $this.Path)\$ConfigFile" -ErrorAction Ignore
+        $Parameters.ConfigFile | ConvertTo-Json -Depth 10 | Set-Content "$(Split-Path $this.Path)\$ConfigFile" -ErrorAction Ignore
 
         #Write pool file. Keep separate files
         $PoolFile = "Pools_$($this.Pool)-$($this.Algorithm).txt" #Use unqualified file name in case MPM path contains spaces
