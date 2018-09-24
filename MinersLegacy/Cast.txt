@@ -51,9 +51,9 @@
         "Type":  "AMD",
         "Path":  ".\\Bin\\CryptoNight-Cast\\cast_xmr-vega.exe",
         "HashSHA256": "FF887BD92EF16731AE8F65EFC4DB38C9302C054DA09FD6219BDA6A6140D5EE28",
-        "Arguments":  "\"--remoteaccess --algo=4 -S $($Pools.CryptoNightV7Lite.Host):$($Pools.CryptoNightV7Lite.Port) -u $($Pools.CryptoNightV7Lite.User) -p $($Pools.CryptoNightV7Lite.Pass) --forcecompute --fastjobswitch$($DeviceID = 0; $DeviceIDs = @();([OpenCl.Platform]::GetPlatformIDs() | ForEach-Object {[OpenCl.Device]::GetDeviceIDs($_, [OpenCl.DeviceType]::All)} | Where {$_.Type -eq 'GPU' -and $_.Vendor -match 'Advanced Micro Devices, Inc.'} | ForEach-Object {$DeviceIDs += $DeviceID; $DeviceID++});if($DeviceIDs){' -G';$($DeviceIDs -join ',')})\"",
+        "Arguments":  "\"--remoteaccess --algo=4 -S $($Pools.CryptoNightLiteV7.Host):$($Pools.CryptoNightLiteV7.Port) -u $($Pools.CryptoNightLiteV7.User) -p $($Pools.CryptoNightLiteV7.Pass) --forcecompute --fastjobswitch$($DeviceID = 0; $DeviceIDs = @();([OpenCl.Platform]::GetPlatformIDs() | ForEach-Object {[OpenCl.Device]::GetDeviceIDs($_, [OpenCl.DeviceType]::All)} | Where {$_.Type -eq 'GPU' -and $_.Vendor -match 'Advanced Micro Devices, Inc.'} | ForEach-Object {$DeviceIDs += $DeviceID; $DeviceID++});if($DeviceIDs){' -G';$($DeviceIDs -join ',')})\"",
         "HashRates":  {
-                          "CryptoNightV7Lite":  "\"$(if ($Pools.CryptoNightV7Lite.SSL) {0}else {$Stats.Cast_CryptoNightV7Lite_HashRate.Week})\""
+                          "CryptoNightLiteV7":  "\"$(if ($Pools.CryptoNightLiteV7.SSL) {0}else {$Stats.Cast_CryptoNightLiteV7_HashRate.Week})\""
                       },
         "API":  "Cast",
         "Port":  "7777",
