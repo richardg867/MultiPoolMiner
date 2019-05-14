@@ -1,49 +1,45 @@
 ﻿using module .\Include.psm1
 
 param(
-    [Parameter(Mandatory=$true)][String]$Key,
-    [Parameter(Mandatory=$true)][String]$WorkerName,
-    [Parameter(Mandatory=$true)]$ActiveMiners,
-    [Parameter(Mandatory=$true)]$MinerStatusURL
+    [Parameter(Mandatory = $true)][String]$Key,
+    [Parameter(Mandatory = $true)][String]$WorkerName,
+    [Parameter(Mandatory = $true)]$ActiveMiners,
+    [Parameter(Mandatory = $true)]$MinerStatusURL
 )
 
-Write-Log "Pinging monitoring server."
+Write-Log "Pinging monitoring server. "
+Write-Host "Your miner status key is: $Key"
+
 $profit = ($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.GetStatus() -eq "Running"} | Measure-Object Profit -Sum).Sum | ConvertTo-Json
 
-# Format the miner values for reporting.  Set relative path so the server doesn't store anything personal (like your system username, if running from somewhere in your profile)
-$minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.GetStatus() -eq "Running"} | Foreach-Object {
-$ActiveMiner = $_
-# Find the matching entry in $Miners, to get pool information. Perhaps there is a better way to do this?
-$MatchingMiner = $ActiveMiners | Where-Object {$_.Name -eq $ActiveMiner.Name -and $_.Path -eq $ActiveMiner.Path -and $_.Arguments -eq $ActiveMiner.Arguments -and $_.Wrap -eq $ActiveMiner.Wrap -and $_.API -eq $ActiveMiner.API -and $_.Port -eq $ActiveMiner.Port}
-# Create a custom object to convert to json. Type, Pool, CurrentSpeed and EstimatedSpeed are all forced to be arrays, since they sometimes have multiple values.
-    [pscustomobject]@{
-        Name           = $_.Name
-        Path           = Resolve-Path -Relative $_.Path
-        Type           = @($_.Type)
-        Active         = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f $_.GetActiveTime()
-        Algorithm      = @($_.Algorithm)
-        Pool           = @($_.Pool)
-        CurrentSpeed   = @($_.Speed_Live)
-        EstimatedSpeed = @($_.Speed)
-        'BTC/day'      = $_.Profit
-    }
-})
-
-$retries = 3
-$retrycount = 0
-$completed = $false
-
-while (-not $completed) {
-    try{
-        Invoke-RestMethod -Uri "$MinerStatusURL" -TimeoutSec 10 -Method Post -Body @{workername = $WorkerName; miners = $minerreport; profit = $profit}
-        $completed = $true
-    } catch {
-        if ($retrycount -ge $retries) {
-            Write-Warning "Unable to post to monitoring URL..."
-        } else {
-            Write-Warning "Post to monitoring URL failed. Retrying in 5 seconds."
-            Start-Sleep 5
-            $retrycount++
+# Format the miner values for reporting. Set relative path so the server doesn't store anything personal (like your system username, if running from somewhere in your profile)
+$minerreport = ConvertTo-Json @(
+    $ActiveMiners | Where-Object {$_.Activated -GT 0 -and $_.GetStatus() -eq "Running"} | Foreach-Object {
+        # Create a custom object to convert to json. Type, Pool, CurrentSpeed and EstimatedSpeed are all forced to be arrays, since they sometimes have multiple values.
+        [pscustomobject]@{
+            Name           = $_.Name
+            Path           = Resolve-Path -Relative $_.Path
+            Type           = @($_.Type)
+            Active         = "{0:dd} Days {0:hh} Hours {0:mm} Minutes" -f $_.GetActiveTime()
+            Algorithm      = @($_.Algorithm)
+            Pool           = @($_.Pool)
+            CurrentSpeed   = @($_.Speed_Live)
+            EstimatedSpeed = @($_.Speed)
+            'BTC/day'      = $_.Profit
         }
     }
+)
+
+try {
+    $Response = Invoke-RestMethod -Uri $MinerStatusURL -Method Post -Body @{address = $Key; workername = $WorkerName; miners = $minerreport; profit = $profit} -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
+
+    if ($Response -eq "success") {
+        Write-Log "Miner Status ($MinerStatusURL): $Response"
+    }
+    else {
+        Write-Log -Level Warn "Miner Status ($MinerStatusURL): $Response"
+    }
+}
+catch {
+    Write-Log -Level Warn "Miner Status ($MinerStatusURL) has failed. "
 }

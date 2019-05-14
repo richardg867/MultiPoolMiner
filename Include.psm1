@@ -1,16 +1,78 @@
-Set-Location (Split-Path $MyInvocation.MyCommand.Path)
+﻿Set-Location (Split-Path $MyInvocation.MyCommand.Path)
 
 Add-Type -Path .\OpenCL\*.cs
+
+try {
+    Add-Type -Path (".\MonoTorrent\*.cs" | Get-ChildItem -Recurse).FullName -IgnoreWarnings -WarningAction SilentlyContinue -ReferencedAssemblies "System.Xml" -ErrorAction Stop
+}
+catch {
+    Add-Type -Path (".\MonoTorrent\*.cs" | Get-ChildItem -Recurse).FullName -IgnoreWarnings -WarningAction SilentlyContinue
+}
+
+function Get-CommandPerDevice {
+
+    # rewrites the command parameters
+    # if a parameter has multiple values, only the values for the available devices are returned
+    # parameters with a single value are valid for all devices and remain untouched
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [String]$Command,
+        [Parameter(Mandatory = $false)]
+        [Int[]]$Devices
+    )
+
+    $CommandPerDevice = ""
+
+    $Command -split "(?=\s{1,}--|\s{1,}-| ,|^,)" | ForEach-Object {
+        $Token = $_
+        $Prefix = $null
+        $ParameterValueSeparator = $null
+        $ValueSeparator = $null
+        $Values = $null
+
+        if ($Token.TrimStart() -match "(?:^[-=]{1,})") {
+            # supported prefix characters are listed in brackets: [-=]{1,}
+
+            $Prefix = "$($Token -split $Matches[0] | Select -Index 0)$($Matches[0])"
+            $Token = $Token -split $Matches[0] | Select -Last 1
+
+            if ($Token -match "(?:[ =]{1,})") {
+                # supported separators are listed in brackets: [ =]{1,}
+                $ParameterValueSeparator = $Matches[0]
+                $Parameter = $Token -split $ParameterValueSeparator | Select -Index 0
+                $Values = $Token.Substring(("$($Parameter)$($ParameterValueSeparator)").length)
+
+                if ($Values -match "(?:[,; ]{1})") {
+                    # supported separators are listed in brackets: [,; ]{1}
+                    $ValueSeparator = $Matches[0]
+                    $RelevantValues = @()
+                    $Devices | Foreach-Object {
+                        if ($Values.Split($ValueSeparator) | Select -Index $_) {$RelevantValues += ($Values.Split($ValueSeparator) | Select -Index $_)}
+                        else {$RelevantValues += ""}
+                    }                    
+                    $CommandPerDevice += "$($Prefix)$($Parameter)$($ParameterValueSeparator)$(($RelevantValues -join $ValueSeparator).TrimEnd($ValueSeparator))"
+                }
+                else {$CommandPerDevice += "$($Prefix)$($Parameter)$($ParameterValueSeparator)$($Values)"}
+            }
+            else {$CommandPerDevice += "$($Prefix)$($Token)"}
+        }
+        else {$CommandPerDevice += $Token}
+    }
+    $CommandPerDevice
+}
 
 function Get-Balance {
     [CmdletBinding()]
     param($Config, $NewRates)
 
     $Data = [PSCustomObject]@{}
-    
+
     $Balances = @(Get-ChildItem "Balances" -File | Where-Object {$Config.Pools.$($_.BaseName) -and ($Config.ExcludePoolName -inotcontains $_.BaseName -or $Config.ShowPoolBalancesExcludedPools)} | ForEach-Object {
-        Get-ChildItemContent "Balances\$($_.Name)" -Parameters @{Config = $Config}
-    } | Foreach-Object {$_.Content | Add-Member Name $_.Name -PassThru -Force} | Sort-Object Name)
+            Get-ChildItemContent "Balances\$($_.Name)" -Parameters @{Config = $Config}
+        } | Foreach-Object {$_.Content | Add-Member Name $_.Name -PassThru -Force} | Sort-Object Name)
 
     #Get exchgange rates for all payout currencies
     $CurrenciesWithBalances = @($Balances.currency | Sort-Object -Unique)
@@ -24,7 +86,7 @@ function Get-Balance {
 
     #Add total of totals
     $Totals = [PSCustomObject]@{
-        Name  = "*Total*"
+        Name = "*Total*"
     }
     #Add Balance (in currency)
     $Rates.PSObject.Properties.Name | ForEach-Object {
@@ -47,10 +109,10 @@ function Get-Balance {
         $Balances | Foreach-Object {
             $_ | Add-Member "Value in $Currency" $(if ($Rates.$($_.Currency).$Currency) {("{0:N$($Digits)}" -f ([Float]$_.Total * [Float]$Rates.$($_.Currency).$Currency))}else {"unknown"}) -Force
         }
-        if (($Balances."Value in $Currency" | Measure-Object -Sum -ErrorAction Ignore).sum)  {$Totals | Add-Member "Value in $Currency" ("{0:N$($Digits)}" -f ([Float]$($Balances."Value in $Currency" | Measure-Object -Sum -ErrorAction Ignore).sum)) -Force}
+        if (($Balances."Value in $Currency" | Measure-Object -Sum -ErrorAction Ignore).sum) {$Totals | Add-Member "Value in $Currency" ("{0:N$($Digits)}" -f ([Float]$($Balances."Value in $Currency" | Measure-Object -Sum -ErrorAction Ignore).sum)) -Force}
     }
     $Balances += $Totals
-    
+
     $Data | Add-Member Balances $Balances
     $Data | Add-Member Rates $Rates
 
@@ -78,7 +140,7 @@ function Write-Log {
         $filename = ".\Logs\MultiPoolMiner_$(Get-Date -Format "yyyy-MM-dd").txt"
         $date = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
-        if (-not (Test-Path "Stats")) {New-Item "Stats" -ItemType "directory" | Out-Null}
+        if (-not (Test-Path "Stats" -PathType Container)) {New-Item "Stats" -ItemType "directory" | Out-Null}
 
         switch ($Level) {
             'Error' {
@@ -138,25 +200,25 @@ function Set-Stat {
     $SmallestValue = 1E-20
 
     $Stat = Get-Content $Path -ErrorAction SilentlyContinue
-    
+
     try {
         $Stat = $Stat | ConvertFrom-Json -ErrorAction Stop
         $Stat = [PSCustomObject]@{
-            Live = [Double]$Stat.Live
-            Minute = [Double]$Stat.Minute
-            Minute_Fluctuation = [Double]$Stat.Minute_Fluctuation
-            Minute_5 = [Double]$Stat.Minute_5
-            Minute_5_Fluctuation = [Double]$Stat.Minute_5_Fluctuation
-            Minute_10 = [Double]$Stat.Minute_10
+            Live                  = [Double]$Stat.Live
+            Minute                = [Double]$Stat.Minute
+            Minute_Fluctuation    = [Double]$Stat.Minute_Fluctuation
+            Minute_5              = [Double]$Stat.Minute_5
+            Minute_5_Fluctuation  = [Double]$Stat.Minute_5_Fluctuation
+            Minute_10             = [Double]$Stat.Minute_10
             Minute_10_Fluctuation = [Double]$Stat.Minute_10_Fluctuation
-            Hour = [Double]$Stat.Hour
-            Hour_Fluctuation = [Double]$Stat.Hour_Fluctuation
-            Day = [Double]$Stat.Day
-            Day_Fluctuation = [Double]$Stat.Day_Fluctuation
-            Week = [Double]$Stat.Week
-            Week_Fluctuation = [Double]$Stat.Week_Fluctuation
-            Duration = [TimeSpan]$Stat.Duration
-            Updated = [DateTime]$Stat.Updated
+            Hour                  = [Double]$Stat.Hour
+            Hour_Fluctuation      = [Double]$Stat.Hour_Fluctuation
+            Day                   = [Double]$Stat.Day
+            Day_Fluctuation       = [Double]$Stat.Day_Fluctuation
+            Week                  = [Double]$Stat.Week
+            Week_Fluctuation      = [Double]$Stat.Week_Fluctuation
+            Duration              = [TimeSpan]$Stat.Duration
+            Updated               = [DateTime]$Stat.Updated
         }
 
         $ToleranceMin = $Value
@@ -181,69 +243,69 @@ function Set-Stat {
             $Span_Week = [Math]::Min(($Duration.TotalDays / 7) / [Math]::Min(($Stat.Duration.TotalDays / 7), 1), 1)
 
             $Stat = [PSCustomObject]@{
-                Live = $Value
-                Minute = ((1 - $Span_Minute) * $Stat.Minute) + ($Span_Minute * $Value)
-                Minute_Fluctuation = ((1 - $Span_Minute) * $Stat.Minute_Fluctuation) + 
+                Live                  = $Value
+                Minute                = ((1 - $Span_Minute) * $Stat.Minute) + ($Span_Minute * $Value)
+                Minute_Fluctuation    = ((1 - $Span_Minute) * $Stat.Minute_Fluctuation) + 
                 ($Span_Minute * ([Math]::Abs($Value - $Stat.Minute) / [Math]::Max([Math]::Abs($Stat.Minute), $SmallestValue)))
-                Minute_5 = ((1 - $Span_Minute_5) * $Stat.Minute_5) + ($Span_Minute_5 * $Value)
-                Minute_5_Fluctuation = ((1 - $Span_Minute_5) * $Stat.Minute_5_Fluctuation) + 
+                Minute_5              = ((1 - $Span_Minute_5) * $Stat.Minute_5) + ($Span_Minute_5 * $Value)
+                Minute_5_Fluctuation  = ((1 - $Span_Minute_5) * $Stat.Minute_5_Fluctuation) + 
                 ($Span_Minute_5 * ([Math]::Abs($Value - $Stat.Minute_5) / [Math]::Max([Math]::Abs($Stat.Minute_5), $SmallestValue)))
-                Minute_10 = ((1 - $Span_Minute_10) * $Stat.Minute_10) + ($Span_Minute_10 * $Value)
+                Minute_10             = ((1 - $Span_Minute_10) * $Stat.Minute_10) + ($Span_Minute_10 * $Value)
                 Minute_10_Fluctuation = ((1 - $Span_Minute_10) * $Stat.Minute_10_Fluctuation) + 
                 ($Span_Minute_10 * ([Math]::Abs($Value - $Stat.Minute_10) / [Math]::Max([Math]::Abs($Stat.Minute_10), $SmallestValue)))
-                Hour = ((1 - $Span_Hour) * $Stat.Hour) + ($Span_Hour * $Value)
-                Hour_Fluctuation = ((1 - $Span_Hour) * $Stat.Hour_Fluctuation) + 
+                Hour                  = ((1 - $Span_Hour) * $Stat.Hour) + ($Span_Hour * $Value)
+                Hour_Fluctuation      = ((1 - $Span_Hour) * $Stat.Hour_Fluctuation) + 
                 ($Span_Hour * ([Math]::Abs($Value - $Stat.Hour) / [Math]::Max([Math]::Abs($Stat.Hour), $SmallestValue)))
-                Day = ((1 - $Span_Day) * $Stat.Day) + ($Span_Day * $Value)
-                Day_Fluctuation = ((1 - $Span_Day) * $Stat.Day_Fluctuation) + 
+                Day                   = ((1 - $Span_Day) * $Stat.Day) + ($Span_Day * $Value)
+                Day_Fluctuation       = ((1 - $Span_Day) * $Stat.Day_Fluctuation) + 
                 ($Span_Day * ([Math]::Abs($Value - $Stat.Day) / [Math]::Max([Math]::Abs($Stat.Day), $SmallestValue)))
-                Week = ((1 - $Span_Week) * $Stat.Week) + ($Span_Week * $Value)
-                Week_Fluctuation = ((1 - $Span_Week) * $Stat.Week_Fluctuation) + 
+                Week                  = ((1 - $Span_Week) * $Stat.Week) + ($Span_Week * $Value)
+                Week_Fluctuation      = ((1 - $Span_Week) * $Stat.Week_Fluctuation) + 
                 ($Span_Week * ([Math]::Abs($Value - $Stat.Week) / [Math]::Max([Math]::Abs($Stat.Week), $SmallestValue)))
-                Duration = $Stat.Duration + $Duration
-                Updated = $Updated
+                Duration              = $Stat.Duration + $Duration
+                Updated               = $Updated
             }
         }
     }
     catch {
-        if (Test-Path $Path) {Write-Log -Level Warn "Stat file ($Name) is corrupt and will be reset. "}
+        if (Test-Path $Path -PathType Leaf) {Write-Log -Level Warn "Stat file ($Name) is corrupt and will be reset. "}
 
         $Stat = [PSCustomObject]@{
-            Live = $Value
-            Minute = $Value
-            Minute_Fluctuation = 0
-            Minute_5 = $Value
-            Minute_5_Fluctuation = 0
-            Minute_10 = $Value
+            Live                  = $Value
+            Minute                = $Value
+            Minute_Fluctuation    = 0
+            Minute_5              = $Value
+            Minute_5_Fluctuation  = 0
+            Minute_10             = $Value
             Minute_10_Fluctuation = 0
-            Hour = $Value
-            Hour_Fluctuation = 0
-            Day = $Value
-            Day_Fluctuation = 0
-            Week = $Value
-            Week_Fluctuation = 0
-            Duration = $Duration
-            Updated = $Updated
+            Hour                  = $Value
+            Hour_Fluctuation      = 0
+            Day                   = $Value
+            Day_Fluctuation       = 0
+            Week                  = $Value
+            Week_Fluctuation      = 0
+            Duration              = $Duration
+            Updated               = $Updated
         }
     }
 
-    if (-not (Test-Path "Stats")) {New-Item "Stats" -ItemType "directory" | Out-Null}
+    if (-not (Test-Path "Stats" -PathType Container)) {New-Item "Stats" -ItemType "directory" | Out-Null}
     [PSCustomObject]@{
-        Live = [Decimal]$Stat.Live
-        Minute = [Decimal]$Stat.Minute
-        Minute_Fluctuation = [Double]$Stat.Minute_Fluctuation
-        Minute_5 = [Decimal]$Stat.Minute_5
-        Minute_5_Fluctuation = [Double]$Stat.Minute_5_Fluctuation
-        Minute_10 = [Decimal]$Stat.Minute_10
+        Live                  = [Decimal]$Stat.Live
+        Minute                = [Decimal]$Stat.Minute
+        Minute_Fluctuation    = [Double]$Stat.Minute_Fluctuation
+        Minute_5              = [Decimal]$Stat.Minute_5
+        Minute_5_Fluctuation  = [Double]$Stat.Minute_5_Fluctuation
+        Minute_10             = [Decimal]$Stat.Minute_10
         Minute_10_Fluctuation = [Double]$Stat.Minute_10_Fluctuation
-        Hour = [Decimal]$Stat.Hour
-        Hour_Fluctuation = [Double]$Stat.Hour_Fluctuation
-        Day = [Decimal]$Stat.Day
-        Day_Fluctuation = [Double]$Stat.Day_Fluctuation
-        Week = [Decimal]$Stat.Week
-        Week_Fluctuation = [Double]$Stat.Week_Fluctuation
-        Duration = [String]$Stat.Duration
-        Updated = [DateTime]$Stat.Updated
+        Hour                  = [Decimal]$Stat.Hour
+        Hour_Fluctuation      = [Double]$Stat.Hour_Fluctuation
+        Day                   = [Decimal]$Stat.Day
+        Day_Fluctuation       = [Double]$Stat.Day_Fluctuation
+        Week                  = [Decimal]$Stat.Week
+        Week_Fluctuation      = [Double]$Stat.Week_Fluctuation
+        Duration              = [String]$Stat.Duration
+        Updated               = [DateTime]$Stat.Updated
     } | ConvertTo-Json | Set-Content $Path
 
     $Stat
@@ -256,7 +318,7 @@ function Get-Stat {
         [String]$Name
     )
 
-    if (-not (Test-Path "Stats")) {New-Item "Stats" -ItemType "directory" | Out-Null}
+    if (-not (Test-Path "Stats" -PathType Container)) {New-Item "Stats" -ItemType "directory" | Out-Null}
 
     if ($Name) {
         # Return single requested stat
@@ -370,7 +432,7 @@ function ConvertTo-LocalCurrency {
     $Digits = ([math]::truncate(10 - $Offset - [math]::log($BTCRate, 10)))
     if ($Digits -lt 0) {$Digits = 0}
     if ($Digits -gt 10) {$Digits = 10}
-    
+
     ($Value * $BTCRate).ToString("N$($Digits)")
 }
 
@@ -446,10 +508,10 @@ function Expand-WebRequest {
     [Environment]::CurrentDirectory = $ExecutionContext.SessionState.Path.CurrentFileSystemLocation
 
     if (-not $Path) {$Path = Join-Path ".\Downloads" ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName}
-    if (-not (Test-Path ".\Downloads")) {New-Item "Downloads" -ItemType "directory" | Out-Null}
+    if (-not (Test-Path ".\Downloads" -PathType Container)) {New-Item "Downloads" -ItemType "directory" | Out-Null}
     $FileName = Join-Path ".\Downloads" (Split-Path $Uri -Leaf)
 
-    if (Test-Path $FileName) {Remove-Item $FileName}
+    if (Test-Path $FileName -PathType Leaf) {Remove-Item $FileName}
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest $Uri -OutFile $FileName -UseBasicParsing
 
@@ -457,19 +519,24 @@ function Expand-WebRequest {
         Start-Process $FileName "-s -qb" -Wait
     }
     else {
-        $Path_Old = (Join-Path (Split-Path $Path) ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName)
-        $Path_New = (Join-Path (Split-Path $Path) (Split-Path $Path -Leaf))
+        $Path_Old = (Join-Path (Split-Path (Split-Path $Path)) ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName)
+        $Path_New = Split-Path $Path
 
-        if (Test-Path $Path_Old) {Remove-Item $Path_Old -Recurse -Force}
-        Start-Process "7z" "x `"$([IO.Path]::GetFullPath($FileName))`" -o`"$([IO.Path]::GetFullPath($Path_Old))`" -y -spe" -Wait
+        if (Test-Path $Path_Old -PathType Container) {Remove-Item $Path_Old -Recurse -Force}
+        Start-Process "7z" "x `"$([IO.Path]::GetFullPath($FileName))`" -o`"$([IO.Path]::GetFullPath($Path_Old))`" -y -spe" -Wait -WindowStyle Hidden
 
-        if (Test-Path $Path_New) {Remove-Item $Path_New -Recurse -Force}
-        if (Get-ChildItem $Path_Old | Where-Object PSIsContainer -EQ $false) {
-            Rename-Item $Path_Old (Split-Path $Path -Leaf)
+        if (Test-Path $Path_New -PathType Container) {Remove-Item $Path_New -Recurse -Force}
+
+        #use first (topmost) directory in case, e.g. ClaymoreDual_v11.9, contain multiple miner binaries for different driver versions in various sub dirs
+        $Path_Old = (Get-ChildItem $Path_Old -File -Recurse | Where-Object {$_.Name -EQ $(Split-Path $Path -Leaf)}).Directory | Select-Object -First 1
+
+        if ($Path_Old) {
+            Move-Item $Path_Old $Path_New -PassThru | ForEach-Object -Process {$_.LastWritetime = Get-Date}
+            $Path_Old = (Join-Path (Split-Path (Split-Path $Path)) ([IO.FileInfo](Split-Path $Uri -Leaf)).BaseName)
+            if (Test-Path $Path_Old -PathType Container) {Remove-Item $Path_Old -Recurse -Force}
         }
         else {
-            Get-ChildItem $Path_Old | Where-Object PSIsContainer -EQ $true | ForEach-Object {Move-Item $_.FullName $Path_New}
-            Remove-Item $Path_Old
+            Throw "Error: Cannot find $($Path). "
         }
     }
 }
@@ -605,21 +672,29 @@ function Get-Device {
             [OpenCl.Device]::GetDeviceIDs($_, [OpenCl.DeviceType]::All) | ForEach-Object {
                 $Device_OpenCL = $_ | ConvertTo-Json | ConvertFrom-Json
                 $Device = [PSCustomObject]@{
-                    Index = [Int]$Index
-                    PlatformId = [Int]$PlatformId
-                    PlatformId_Index = [Int]$PlatformId_Index."$($PlatformId)"
+                    Index                 = [Int]$Index
+                    PlatformId            = [Int]$PlatformId
+                    PlatformId_Index      = [Int]$PlatformId_Index."$($PlatformId)"
                     Type_PlatformId_Index = [Int]$Type_PlatformId_Index."$($Device_OpenCL.Type)"."$($PlatformId)"
-                    Vendor = [String]$Device_OpenCL.Vendor
-                    Vendor_Index = [Int]$Vendor_Index."$($Device_OpenCL.Vendor)"
-                    Type_Vendor_Index = [Int]$Type_Vendor_Index."$($Device_OpenCL.Type)"."$($Device_OpenCL.Vendor)"
-                    Type = [String]$Device_OpenCL.Type
-                    Type_Index = [Int]$Type_Index."$($Device_OpenCL.Type)"
-                    OpenCL = $Device_OpenCL
-                    Model = [String]$Device_OpenCL.Name
+                    Vendor                = [String]$Device_OpenCL.Vendor
+                    Vendor_ShortName      = $(Switch ([String]$Device_OpenCL.Vendor) {
+                            "Advanced Micro Devices, Inc." {"AMD"}
+                            "Intel(R) Corporation" {"INTEL"}
+                            "NVIDIA Corporation" {"NVIDIA"}
+                            default {[String]$Device_OpenCL.Vendor}
+                        }
+                    )
+                    Vendor_Index          = [Int]$Vendor_Index."$($Device_OpenCL.Vendor)"
+                    Type_Vendor_Index     = [Int]$Type_Vendor_Index."$($Device_OpenCL.Type)"."$($Device_OpenCL.Vendor)"
+                    Type                  = [String]$Device_OpenCL.Type
+                    Type_Index            = [Int]$Type_Index."$($Device_OpenCL.Type)"
+                    OpenCL                = $Device_OpenCL
+                    Model                 = "$($Device_OpenCL.Name)$(if ($Device_OpenCL.Vendor -eq "Advanced Micro Devices, Inc.") {"$($Device_OpenCL.GlobalMemSize / 1GB)GB"})"
+                    Model_Norm            = "$($Device_OpenCL.Name -replace '[^A-Z0-9]' -replace 'GeForce')$(if ($Device_OpenCL.Vendor -eq "Advanced Micro Devices, Inc.") {"$($Device_OpenCL.GlobalMemSize / 1GB)GB"})"
                 }
 
                 if ((-not $Name) -or ($Name_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -like ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))})) {
-                    if ((-not $ExcludeName) -or ($ExcludeName_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -notlike ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))})) {
+                    if ((-not $ExcludeName) -or (-not ($ExcludeName_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -like ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))}))) {
                         $Devices += $Device | Add-Member Name ("{0}#{1:d2}" -f $Device.Type, $Device.Type_Index).ToUpper() -PassThru
                     }
                 }
@@ -655,17 +730,19 @@ function Get-Device {
         # Vendor and type the same for all CPUs, so there is no need to actually track the extra indexes.  Include them only for compatibility.
         $CPUInfo = $_ | ConvertTo-Json | ConvertFrom-Json
         $Device = [PSCustomObject]@{
-            Index = [Int]$Index
-            Vendor = $CPUInfo.Manufacturer
+            Index             = [Int]$Index
+            Vendor            = $CPUInfo.Manufacturer
+            Vendor_ShortName  = $(if ($CPUInfo.Manufacturer -eq "GenuineIntel") {"INTEL"} else {"AMD"})
             Type_Vendor_Index = $CPUIndex
-            Type = "Cpu"
-            Type_Index = $CPUIndex
-            CIM = $CPUInfo
-            Model = $CPUInfo.Name
+            Type              = "Cpu"
+            Type_Index        = $CPUIndex
+            CIM               = $CPUInfo
+            Model             = $CPUInfo.Name
+            Model_Norm        = "$($CPUInfo.Manufacturer)$($CPUInfo.NumberOfCores)CoreCPU"
         }
 
         if ((-not $Name) -or ($Name_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -like ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))})) {
-            if ((-not $ExcludeName) -or ($ExcludeName_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -notlike ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))})) {
+            if ((-not $ExcludeName) -or (-not ($ExcludeName_Devices | Where-Object {($Device | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name)) -like ($_ | Select-Object ($_ | Get-Member -MemberType NoteProperty -ErrorAction Ignore | Select-Object -ExpandProperty Name))}))) {
                 $Devices += $Device | Add-Member Name ("{0}#{1:d2}" -f $Device.Type, $Device.Type_Index).ToUpper() -PassThru
             }
         }
@@ -711,6 +788,27 @@ function Get-Region {
     else {$Region}
 }
 
+function Get-EquihashPers {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyString()]
+        [String]$CoinName = "",
+        [Parameter(Mandatory = $false)]
+        [AllowEmptyString()]
+        [String]$Default = ""
+    )
+
+    if (-not (Test-Path Variable:Script:EquihashPers)) {
+        $Script:EquihashPers = Get-Content "EquihashPers.txt" | ConvertFrom-Json
+    }
+
+    $CoinName = (Get-Culture).TextInfo.ToTitleCase(($CoinName -replace "-", " " -replace "_", " ")) -replace " "
+    
+    if ($Script:EquihashPers.$CoinName) {$Script:EquihashPers.$CoinName}
+    else {$Default}
+}
+
 enum MinerStatus {
     Running
     Idle
@@ -745,14 +843,19 @@ class Miner {
     $Pool
     hidden [Array]$Data = @()
     $ShowMinerWindow
-    $ExtendInterval
+    $BenchmarkIntervals
+    $ProcessId
 
     [String[]]GetProcessNames() {
         return @(([IO.FileInfo]($this.Path | Split-Path -Leaf -ErrorAction Ignore)).BaseName)
     }
 
-    [String]GetWorkingDirectory() {
-        return Split-Path $this.Path
+    [String]GetCommandLineParameters() {
+        return $this.Arguments
+    }
+
+    [String]GetCommandLine() {
+        return "$($this.Path) $($this.GetCommandLineParameters())"
     }
 
     hidden StartMining() {
@@ -782,13 +885,26 @@ class Miner {
             }
 
             if ($this.Process | Get-Job -ErrorAction SilentlyContinue) {
-                $this.Status = [MinerStatus]::Running
+                for ($WaitForPID = 0; $WaitForPID -le 20; $WaitForPID++) {
+                    if ($this.ProcessId = (Get-CIMInstance CIM_Process | Where-Object {$_.ExecutablePath -eq $this.Path -and $_.CommandLine -like "*$($this.Path)*$($this.GetCommandLineParameters())*"}).ProcessId) {
+                        $this.Status = [MinerStatus]::Running
+                        break
+                    }
+                    Start-Sleep -Milliseconds 100
+                }
             }
         }
     }
 
     hidden StopMining() {
         $this.Status = [MinerStatus]::Failed
+
+        if ($this.ProcessId) {
+            if (Get-Process -Id $this.ProcessId -ErrorAction SilentlyContinue) {
+                Stop-Process -Id $this.ProcessId -Force -ErrorAction Ignore
+            }
+            $this.ProcessId = $null
+        }
 
         if ($this.Process) {
             if ($this.Process | Get-Job -ErrorAction SilentlyContinue) {
@@ -832,10 +948,12 @@ class Miner {
     }
 
     [MinerStatus]GetStatus() {
-        if ($this.Process.State -eq "Running") {
+        if ($this.Process.State -eq "Running" -and $this.ProcessId -and (Get-Process -Id $this.ProcessId -ErrorAction SilentlyContinue)) {
             return [MinerStatus]::Running
         }
         elseif ($this.Status -eq "Running") {
+            $this.ProcessId = $null
+            $this.Status = [MinerStatus]::Failed
             return [MinerStatus]::Failed
         }
         else {
@@ -919,10 +1037,10 @@ class Miner {
                     $Lines += $Line
 
                     $this.Data += [PSCustomObject]@{
-                        Date = $Date
-                        Raw = $Line_Simple
-                        HashRate = [PSCustomObject]@{[String]$this.Algorithm = $HashRates}
-                        Device = $Devices
+                        Date     = $Date
+                        Raw      = $Line_Simple
+                        HashRate = [PSCustomObject]@{[String]$this.Algorithm = [Int64]$HashRates}
+                        Device   = $Devices
                     }
                 }
             }
@@ -940,8 +1058,12 @@ class Miner {
         $HashRates_Counts = @{}
         $HashRates_Averages = @{}
         $HashRates_Variances = @{}
+        $Hashrates_Samples = @{}
 
-        $this.Data | Where-Object HashRate | Where-Object Date -GE (Get-Date).ToUniversalTime().AddSeconds( - $Seconds) | ForEach-Object {
+        #strip lower 10% and upper 10% of all values for better hashrate stability
+        $Hashrates_Samples = @($this.Data | Where-Object {$_.HashRate.$Algorithm} | Where-Object {$_.Date -GE (Get-Date).ToUniversalTime().AddSeconds( - $Seconds)})
+        $Hashrates_Samples | Sort-Object {$_.HashRate.$Algorithm} | Select-Object -Skip ([Int]($HashRates_Samples.Count * 0.1)) | Select-Object -SkipLast ([Int]($HashRates_Samples.Count * 0.1)) | ForEach-Object {
+
             $Data_Devices = $_.Device
             if (-not $Data_Devices) {$Data_Devices = $HashRates_Devices}
 
@@ -967,5 +1089,210 @@ class Miner {
         else {
             return $HashRates_Average
         }
+    }
+}
+
+enum DownloadStatus {
+    Idle
+    Downloading
+    Complete
+    Failed
+}
+
+class Download {
+    hidden [DownloadStatus]$Status = [DownloadStatus]::Idle
+
+    hidden static $TorrentEngine
+    hidden static $TorrentEngine_DHT
+    hidden static $TorrentEngine_DHT_Listener
+
+    hidden $TorrentEngine_Manager
+    hidden [System.Management.Automation.Job]$HttpJob
+
+    hidden [System.Uri]$Uri
+    hidden [System.Uri]$DownloadFilePath
+
+    Download($Uri, $DownloadFilePath) {
+        $this.Uri = $Uri
+        $this.DownloadFilePath = $DownloadFilePath
+    }
+
+    hidden Start_TorrentEngine() {
+        if ($this.TorrentEngine_Manager) {
+            $this.TorrentEngine_Manager.Stop()
+            [Download]::TorrentEngine.Unregister($this.TorrentEngine_Manager)
+            $this.TorrentEngine_Manager.Dispose()
+            $this.TorrentEngine_Manager = $null
+        }
+
+        $Address = [System.Net.IPAddress]::Any
+        $Port = Get-Random -Minimum ([System.Net.IPEndPoint]::MinPort) -Maximum ([System.Net.IPEndPoint]::MaxPort)
+
+        if (-not [Download]::TorrentEngine_DHT) {
+            [Download]::TorrentEngine_DHT_Listener = New-Object "MonoTorrent.Dht.Listeners.DhtListener" ([System.Net.IPEndPoint]::new($Address, $Port))
+            [Download]::TorrentEngine_DHT = New-Object "MonoTorrent.Dht.DhtEngine" ([Download]::TorrentEngine_DHT_Listener)
+            [Download]::TorrentEngine_DHT.Start()
+
+            for ($i = 0; $i -lt 60 * 2 -and [Download]::TorrentEngine_DHT.State -ne "Ready"; $i += 10) {
+                Start-Sleep 10
+            }
+
+            if ([Download]::TorrentEngine_DHT.State -ne "Ready") {
+                [Download]::TorrentEngine_DHT.Dispose()
+                [Download]::TorrentEngine_DHT = $null
+                $this.Status = [DownloadStatus]::Failed
+                return
+            }
+        }
+
+        if (-not [Download]::TorrentEngine) {
+            $TorrentEngine_Settings = New-Object "MonoTorrent.Client.EngineSettings"
+            [Download]::TorrentEngine = New-Object "MonoTorrent.Client.ClientEngine" $TorrentEngine_Settings
+            [Download]::TorrentEngine.ChangeListenEndpoint([System.Net.IPEndPoint]::new($Address, $Port))
+            [Download]::TorrentEngine.RegisterDht([Download]::TorrentEngine_DHT)
+        }
+
+        if (-not $this.TorrentEngine_Manager) {
+            $Magnet = New-Object "MonoTorrent.Common.MagnetLink" $this.Uri
+            $TorrentEngine_Manager_Settings = New-Object "MonoTorrent.Client.TorrentSettings"
+            $this.TorrentEngine_Manager = New-Object "MonoTorrent.Client.TorrentManager" $Magnet, $this.DownloadFilePath.AbsolutePath, $TorrentEngine_Manager_Settings, (Join-Path $this.DownloadFilePath.AbsolutePath "$($Magnet.InfoHash).torrent")
+            [Download]::TorrentEngine.Register($this.TorrentEngine_Manager)
+        }
+
+        $this.TorrentEngine_Manager.Start()
+        $this.Status = [DownloadStatus]::Downloading
+    }
+
+    hidden Start_HttpJob() {
+        if ($this.HttpJob) {
+            Remove-Job $this.HttpJob -Force
+            $this.HttpJob = $null
+        }
+
+        $this.HttpJob = Start-Job {
+            param($Uri, $DownloadFilePath)
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $Download = Invoke-WebRequest $Uri
+            $Download_FileName = [String]($Download.Headers["Content-Disposition"] -Split '; ' | ForEach-Object {[PSCustomObject]@{($_ -Split '=')[0] = ($_ -Split '=')[1]}} | Where-Object filename | Select-Object -First 1 -ExpandProperty filename)
+            [System.IO.File]::WriteAllBytes((Join-Path $DownloadFilePath $Download_FileName), $Download.Content)
+        } -ArgumentList $this.Uri.AbsoluteUri, $this.DownloadFilePath.AbsolutePath
+
+        $this.Status = [DownloadStatus]::Downloading
+
+        return
+    }
+
+    Start() {
+        if ($this.GetStatus() -eq "Downloading") {return}
+
+        if ($this.Uri.Scheme -eq "magnet") {
+            $this.Start_TorrentEngine()
+        }
+        elseif ($this.Uri.Scheme -eq "https" -and $this.Uri.Host -eq "mega.nz") {
+            #To-do: add support for 'https://mega.nz'
+        }
+        else {
+            $this.Start_HttpJob()
+        }
+    }
+
+    Stop() {
+        if ($this.Uri.Scheme -eq "magnet") {
+            $this.TorrentEngine_Manager.Stop()
+        }
+        elseif ($this.Uri.Scheme -eq "https" -and $this.Uri.Host -eq "mega.nz") {
+            #To-do: add support for 'https://mega.nz'
+        }
+        else {
+            Stop-Job $this.HttpJob
+        }
+
+        $this.Status = [DownloadStatus]::Idle
+    }
+
+    hidden GetStatus_TorrentEngine() {
+        if (-not $this.TorrentEngine_Manager) {
+            if ($this.Status -ne "Idle") {
+                $this.Status = [DownloadStatus]::Failed
+            }
+            return
+        }
+
+        $TorrentEngine_Manager_State = $this.TorrentEngine_Manager.State
+
+        if ($TorrentEngine_Manager_State -eq "Error") {
+            $this.Status = [DownloadStatus]::Failed
+        }
+
+        switch ($this.Status) {
+            "Idle" {
+                if ($TorrentEngine_Manager_State -ne "Stopped" -and $TorrentEngine_Manager_State -ne "Paused" -and $TorrentEngine_Manager_State -ne "Stopping") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+            "Downloading" {
+                if ($TorrentEngine_Manager_State -eq "Seeding") {
+                    $this.Status = [DownloadStatus]::Complete
+                }
+                elseif ($TorrentEngine_Manager_State -ne "Downloading" -and $TorrentEngine_Manager_State -ne "Hashing" -and $TorrentEngine_Manager_State -ne "Metadata") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+            "Complete" {
+                if ($TorrentEngine_Manager_State -ne "Seeding") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+        }
+    }
+
+    hidden GetStatus_HttpJob() {
+        if (-not $this.HttpJob) {
+            if ($this.Status -ne "Idle") {
+                $this.Status = [DownloadStatus]::Failed
+            }
+            return
+        }
+
+        $HttpJob_State = $this.HttpJob.State
+
+        if ($HttpJob_State -eq "Failed") {
+            $this.Status = [DownloadStatus]::Failed
+        }
+
+        switch ($this.Status) {
+            "Idle" {
+                if ($HttpJob_State -ne "Stopped" -and $HttpJob_State -ne "Suspended" -and $HttpJob_State -ne "Stopping") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+            "Downloading" {
+                if ($HttpJob_State -eq "Completed") {
+                    $this.Status = [DownloadStatus]::Complete
+                }
+                elseif ($HttpJob_State -ne "Running") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+            "Complete" {
+                if ($HttpJob_State -ne "Completed") {
+                    $this.Status = [DownloadStatus]::Failed
+                }
+            }
+        }
+    }
+
+    [DownloadStatus]GetStatus() {
+        if ($this.Uri.Scheme -eq "magnet") {
+            $this.GetStatus_TorrentEngine()
+        }
+        elseif ($this.Uri.Scheme -eq "https" -and $this.Uri.Host -eq "mega.nz") {
+            #To-do: add support for 'https://mega.nz'
+        }
+        else {
+            $this.GetStatus_HttpJob()
+        }
+
+        return $this.Status
     }
 }
